@@ -1,58 +1,42 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>В разработке — Финансы</title>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    :root {
-      --bg-main: #f8fafc; --surface: #ffffff; --text-dark: #0f172a; --text-gray: #64748b;
-      --green-primary: #10b981; --green-light: #d1fae5; --border: #e2e8f0; --radius-lg: 24px;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-    body { background-color: var(--bg-main); color: var(--text-dark); display: flex; min-height: 100vh; }
-    
-    /* САЙДБАР (Такой же как везде) */
-    .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; z-index: 10; }
-    .logo { display: flex; align-items: center; gap: 12px; font-size: 1.1rem; font-weight: 700; margin-bottom: 40px; color: var(--text-dark); }
-    .logo i { font-size: 28px; color: var(--green-primary); }
-    .nav { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; color: var(--text-gray); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.2s; }
-    .nav-item i { font-size: 22px; }
-    .nav-item:hover { background: #f1f5f9; color: var(--text-dark); }
+<main class="content-wrapper">
+  <div class="header">
+    <div class="header-title">
+      <h1>Цели</h1>
+      <p>Достигай большего. Один шаг за другим 🚀</p>
+    </div>
+    <button class="btn btn-primary"><i class="ph ph-plus"></i> Новая цель</button>
+  </div>
 
-    /* КОНТЕНТ ЗАГЛУШКИ */
-    .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; }
-    .main i { font-size: 64px; color: var(--text-gray); opacity: 0.5; }
-    .main h1 { font-size: 2rem; font-weight: 700; }
-    .main p { color: var(--text-gray); font-size: 1.1rem; max-width: 400px; line-height: 1.5; }
-  </style>
-</head>
-<body>
+  <div class="summary-grid">
+    <div class="sum-card">
+      <div class="sum-card-header">Всего целей</div>
+      <div class="sum-card-val dark">7</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-card-header">Накоплено</div>
+      <div class="sum-card-val dark">1 274 250 ₽</div>
+    </div>
+  </div>
 
-  <aside class="sidebar">
-    <div class="logo"><i class="ph-fill ph-plant"></i> Финансы. Путь к свободе</div>
-    <nav class="nav">
-      <a href="index.html" class="nav-item"><i class="ph ph-house"></i> Главная</a>
-      <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
-      <a href="budget.html" class="nav-item"><i class="ph ph-chart-pie"></i> Бюджет</a>
-      <a href="accounts.html" class="nav-item"><i class="ph ph-wallet"></i> Счета</a>
-      <a href="investments.html" class="nav-item"><i class="ph ph-trend-up"></i> Инвестиции</a>
-      <a href="goals.html" class="nav-item"><i class="ph ph-target"></i> Цели</a>
-      <a href="analytics.html" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
-      <a href="reports.html" class="nav-item"><i class="ph ph-file-text"></i> Отчеты</a>
-      <a href="debts.html" class="nav-item"><i class="ph ph-hand-coins"></i> Долги</a>
-      <a href="settings.html" class="nav-item"><i class="ph ph-gear"></i> Настройки</a>
-    </nav>
-  </aside>
-
-  <main class="main">
-    <i class="ph-fill ph-cone"></i>
-    <h1>Страница в разработке</h1>
-    <p>Скоро здесь появится крутой функционал. А пока можешь вернуться в уже готовые разделы.</p>
-  </main>
-
-</body>
-</html>
+  <div class="goals-list">
+    <div class="goal-card">
+      <div class="goal-info">
+        <div class="goal-icon"><i class="ph-fill ph-airplane"></i></div>
+        <div>
+          <h4>Отпуск в сентябре</h4>
+          <p>Мечты • Долгосрочная</p>
+        </div>
+      </div>
+      <div class="goal-progress">
+        <div class="progress-labels">
+          <span>Накоплено: 3 250 Br</span>
+          <span>Цель: 6 500 Br</span>
+        </div>
+        <div class="progress-bar"><div class="fill" style="width: 50%;"></div></div>
+      </div>
+      <div class="goal-deadline">
+        <span>Осталось 3 месяца</span>
+      </div>
+    </div>
+  </div>
+</main>
