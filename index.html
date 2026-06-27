@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Финансы. Путь к свободе</title>
+  
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-main: #f4f6f9;
+      --surface: #ffffff;
+      --text-dark: #111827;
+      --text-gray: #6b7280;
+      --text-light: #9ca3af;
+      --green-primary: #10b981;
+      --green-light: #d1fae5;
+      --red-primary: #ef4444;
+      --red-light: #fee2e2;
+      --blue-primary: #3b82f6;
+      --purple-primary: #8b5cf6;
+      --border: #f3f4f6;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    
+    body { background-color: var(--bg-main); color: var(--text-dark); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+    /* === САЙДБАР === */
+    .sidebar {
+      width: 260px; background: var(--surface); border-right: 1px solid var(--border);
+      padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 1.1rem; font-weight: 700; margin-bottom: 40px; color: var(--text-dark); }
+    .logo i { font-size: 28px; color: var(--green-primary); }
+    
+    .nav { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 14px; padding: 14px 18px; 
+      border-radius: 14px; color: var(--text-gray); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.2s;
+    }
+    .nav-item i { font-size: 22px; }
+    .nav-item.active { background: var(--green-light); color: var(--green-primary); }
+    .nav-item:hover:not(.active) { background: #f9fafb; color: var(--text-dark); }
+
+    .report-widget {
+      background: #f8fafc; border-radius: 16px; padding: 16px;
+      display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border);
+    }
+    .report-widget span { display: block; font-size: 0.85rem; font-weight: 600; }
+    .report-widget small { color: var(--text-gray); font-size: 0.75rem; }
+    .report-widget i { font-size: 28px; color: #8b5cf6; }
+
+    /* === ОСНОВНОЙ КОНТЕНТ === */
+    .main { flex: 1; padding: 30px 40px; display: flex; flex-direction: column; gap: 30px; }
+    
+    .header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .header p { color: var(--text-gray); font-size: 0.95rem; }
+    .actions { display: flex; align-items: center; gap: 16px; }
+    .icon-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--text-gray); cursor: pointer; }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+
+    /* === СЕТКА ПАНЕЛЕЙ === */
+    .grid { display: grid; gap: 24px; }
+    .top-grid { grid-template-columns: 1.3fr 1fr; }
+    .middle-grid { grid-template-columns: 1fr; }
+    .bottom-grid { grid-template-columns: 1fr 1fr 1.3fr; }
+
+    .card { background: var(--surface); border-radius: var(--radius-lg); padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01); position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* === ПУТЬ К ПАССИВНОМУ ДОХОДУ (ОБНОВЛЕННЫЙ) === */
+    .passive-income {
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      background: 
+        linear-gradient(90deg, rgba(255,255,255,1) 35%, rgba(255,255,255,0.6) 65%, rgba(255,255,255,0) 100%),
+        url('https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80') right center/cover no-repeat;
+    }
+    
+    .pi-content { display: flex; align-items: center; gap: 30px; margin-bottom: 30px; position: relative; z-index: 2; }
+    .pi-circle {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: conic-gradient(#8b5cf6 58%, #f3f4f6 0);
+      display: flex; align-items: center; justify-content: center; position: relative;
+    }
+    .pi-circle::after { content: ''; position: absolute; width: 100px; height: 100px; background: #fff; border-radius: 50%; }
+    .pi-circle span { position: relative; z-index: 1; font-size: 1.5rem; font-weight: 700; }
+    
+    .pi-info { position: relative; z-index: 2; }
+    .pi-info .val { font-size: 1.8rem; font-weight: 800; margin: 4px 0 12px; }
+    .pi-info .val small { font-size: 1rem; color: var(--text-gray); font-weight: 500; }
+    .pi-info p { font-size: 0.85rem; color: var(--text-gray); margin-bottom: 4px; display: flex; justify-content: space-between; width: 200px; }
+    
+    .pi-progress-wrapper { position: relative; z-index: 2; width: 100%; margin-top: auto; }
+    .pi-track { height: 6px; background: rgba(229, 231, 235, 0.8); border-radius: 4px; position: relative; margin: 20px 0 10px; width: 80%; z-index: 2; }
+    .pi-fill { height: 100%; width: 58%; background: var(--green-primary); border-radius: 4px; position: absolute; left: 0; top: 0; }
+    .pi-dot { width: 12px; height: 12px; background: var(--green-primary); border: 3px solid #fff; border-radius: 50%; position: absolute; top: -3px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+    /* === КАРТОЧКА: ЧИСТЫЙ КАПИТАЛ === */
+    .nw-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 15px; }
+    .nw-header h2 { font-size: 2.1rem; font-weight: 800; }
+    .badge-green { background: var(--green-light); color: var(--green-primary); padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; }
+    
+    .chart-line { width: 100%; height: 90px; margin-bottom: 20px; background: url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0,85 Q20,90 40,60 T80,30 T100,15 L100,100 L0,100 Z" fill="%23d1fae5" opacity="0.4"/><path d="M0,85 Q20,90 40,60 T80,30 T100,15" fill="none" stroke="%2310b981" stroke-width="2.5"/></svg>') no-repeat center/100% 100%; }
+    
+    .asset-boxes { display: flex; gap: 12px; }
+    .asset-box { flex: 1; padding: 14px; background: #f8fafc; border: 1px solid var(--border); border-radius: 16px; display: flex; flex-direction: column; gap: 6px; }
+    .asset-box .box-title { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-gray); font-weight: 500; }
+    .asset-box .box-val { font-size: 1.05rem; font-weight: 700; }
+
+    /* === БЛОК КАРТ === */
+    .cards-section-title { font-size: 1.2rem; font-weight: 700; margin-top: 10px; margin-bottom: -10px; color: var(--text-dark); }
+    .cards-wrapper { display: flex; gap: 24px; width: 100%; }
+    
+    .bank-card { 
+      flex: 1; max-width: 380px; height: 210px; border-radius: 24px; padding: 26px; 
+      display: flex; flex-direction: column; justify-content: space-between;
+      box-shadow: 0 12px 30px -8px rgba(0,0,0,0.08); position: relative; overflow: hidden;
+    }
+    .bank-card .balance { font-size: 1.8rem; font-weight: 800; letter-spacing: 0.5px; z-index: 2; margin-top: 10px; }
+    .bank-card .info { font-size: 0.9rem; font-weight: 500; opacity: 0.9; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;}
+    .card-chip { width: 42px; height: 30px; background: rgba(255,255,255,0.25); border-radius: 6px; z-index: 2; border: 1px solid rgba(255,255,255,0.4); }
+    
+    .card-alfa { background: #ed2224; color: #ffffff; }
+    .alfa-logo { 
+      position: absolute; top: 26px; left: 26px; font-size: 38px; font-weight: 900; 
+      color: #000000; text-decoration: underline; text-decoration-thickness: 5px; text-underline-offset: 1px; line-height: 0.8; letter-spacing: -2px;
+    }
+    
+    .card-tbank { background: #ffe600; color: #1c1c1e; }
+    .card-tbank .card-chip { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.15); }
+    .tbank-logo { 
+      position: absolute; top: 26px; right: 26px; font-size: 22px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px; background: #1c1c1e; color: #ffe600; border-radius: 50%;
+    }
+
+    /* === ДОХОДЫ И РАСХОДЫ === */
+    .inc-exp-row { display: flex; flex-direction: column; gap: 24px; margin-top: 10px; }
+    .ie-item h3 { font-size: 0.85rem; color: var(--text-gray); font-weight: 500; margin-bottom: 6px; }
+    .ie-item .amount { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+    
+    .custom-bar { height: 8px; width: 100%; background: #f3f4f6; border-radius: 4px; overflow: hidden; display: flex; }
+    .cb-fill.green { background: var(--green-primary); }
+    .cb-fill.red { background: var(--red-primary); }
+
+    /* === РАСХОДЫ ПО КАТЕГОРИЯМ === */
+    .donut-layout { display: flex; align-items: center; gap: 24px; height: 100%; }
+    .svg-donut { width: 120px; height: 120px; transform: rotate(-90deg); flex-shrink: 0; }
+    .svg-donut circle { fill: none; stroke-width: 16; stroke-linecap: round; }
+    
+    .legend-list { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; font-weight: 500; width: 100%; }
+    .legend-item { display: flex; justify-content: space-between; align-items: center; }
+    .legend-item .left { display: flex; align-items: center; gap: 8px; color: var(--text-gray); }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    /* === ПОСЛЕДНИЕ ОПЕРАЦИИ === */
+    .tx-list { display: flex; flex-direction: column; gap: 14px; margin-top: 5px; }
+    .tx-item { display: flex; justify-content: space-between; align-items: center; }
+    .tx-left { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 0.95rem; }
+    .tx-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .tx-right { font-weight: 700; font-size: 0.95rem; }
+    .text-green { color: var(--green-primary); }
+    .link-all { display: block; text-align: center; margin-top: auto; font-size: 0.9rem; font-weight: 600; color: var(--text-gray); text-decoration: none; border-top: 1px solid var(--border); padding-top: 16px; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo">
+      <i class="ph-fill ph-plant"></i> Финансы. Путь к свободе
+    </div>
+    <nav class="nav">
+      <a href="#" class="nav-item active"><i class="ph ph-house"></i> Главная</a>
+      <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
+      <a href="#" class="nav-item"><i class="ph ph-pie-chart"></i> Бюджет</a>
+      <a href="#" class="nav-item"><i class="ph ph-wallet"></i> Счета</a>
+      <a href="#" class="nav-item"><i class="ph ph-trend-up"></i> Инвестиции</a>
+      <a href="#" class="nav-item"><i class="ph ph-target"></i> Цели</a>
+      <a href="#" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
+      <a href="#" class="nav-item"><i class="ph ph-gear"></i> Настройки</a>
+    </nav>
+    <div class="report-widget">
+      <div>
+        <span>Ежемесячный отчёт</span>
+        <small>Готов к загрузке</small>
+      </div>
+      <i class="ph-fill ph-file-pdf"></i>
+    </div>
+  </aside>
+
+  <main class="main">
+    
+    <header class="header">
+      <div>
+        <h1>Доброе утро, Андрей! <i class="ph-fill ph-leaf" style="color: var(--green-primary); font-size: 24px;"></i></h1>
+        <p>У тебя отличный прогресс. Двигайся дальше!</p>
+      </div>
+      <div class="actions">
+        <button class="icon-btn"><i class="ph ph-magnifying-glass"></i></button>
+        <button class="icon-btn"><i class="ph ph-bell"></i></button>
+        <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar" class="avatar">
+      </div>
+    </header>
+
+    <div class="grid top-grid">
+      
+      <div class="card passive-income">
+        <div class="card-title">Путь к пассивному доходу <i class="ph-fill ph-leaf" style="color: var(--green-primary);"></i></div>
+        
+        <div class="pi-content">
+          <div class="pi-circle">
+            <span>58%</span>
+          </div>
+          <div class="pi-info">
+            <p>Текущий пассивный доход</p>
+            <div class="val">52 650 ₽ <small>/ мес</small></div>
+            <p>Цель: <strong>90 000 ₽ / мес</strong></p>
+            <p>Осталось: <strong>37 350 ₽ / мес</strong></p>
+          </div>
+        </div>
+
+        <div class="pi-progress-wrapper">
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600;">
+            <span style="color: var(--green-primary);">Ты на верном пути!</span>
+            <span style="color: var(--text-gray);">75%</span>
+          </div>
+          <div class="pi-track">
+            <div class="pi-fill"></div>
+            <div class="pi-dot" style="left: 0%;"></div>
+            <div class="pi-dot" style="left: 25%;"></div>
+            <div class="pi-dot" style="left: 58%;"></div>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-gray);">Следующая цель: 75 000 ₽ / мес</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Чистый капитал <i class="ph ph-dots-three-horizontal" style="color: var(--text-light); cursor:pointer;"></i></div>
+        <div class="nw-header">
+          <h2>3 420 000 ₽</h2>
+          <span class="badge-green">+12,5% за месяц</span>
+        </div>
+        <div class="chart-line"></div>
+        <div class="asset-boxes">
+          <div class="asset-box">
+            <div class="box-title"><i class="ph-fill ph-money" style="color: var(--blue-primary);"></i> Деньги</div>
+            <div class="box-val">620 000 ₽</div>
+          </div>
+          <div class="asset-box">
+            <div class="box-title"><i class="ph-fill ph-chart-line-up" style="color: var(--purple-primary);"></i> Инвестиции</div>
+            <div class="box-val">2 400 000 ₽</div>
+          </div>
+          <div class="asset-box">
+            <div class="box-title"><i class="ph-fill ph-buildings" style="color: #f59e0b;"></i> Недвижимость</div>
+            <div class="box-val">400 000 ₽</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <h2 class="cards-section-title">Мои счета и карты</h2>
+    <div class="grid middle-grid">
+      <div class="cards-wrapper">
+        <div class="bank-card card-alfa">
+          <div class="alfa-logo"><u>A</u></div>
+          <div class="card-chip" style="margin-top: 35px;"></div>
+          <div class="info">
+            <div>
+              <div style="font-size: 0.75rem; opacity: 0.85; margin-bottom: 2px; font-weight: 400;">Основной счет BYN</div>
+              <div class="balance">4 850,00 Br</div>
+            </div>
+            <i class="ph-fill ph-contactless-payment" style="font-size: 26px; opacity: 0.9;"></i>
+          </div>
+        </div>
+        
+        <div class="bank-card card-tbank">
+          <div class="tbank-logo">T</div>
+          <div class="card-chip" style="margin-top: 35px;"></div>
+          <div class="info">
+            <div>
+              <div style="font-size: 0.75rem; opacity: 0.7; margin-bottom: 2px; font-weight: 400;">Black RUB</div>
+              <div class="balance">124 500 ₽</div>
+            </div>
+            <div style="font-weight: 800; font-size: 1.2rem; font-style: italic; color: #1c1c1e; opacity: 0.8;">MIR</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid bottom-grid">
+      
+      <div class="card">
+        <div class="card-title">Доходы и расходы <span style="font-size: 0.85rem; color: var(--text-gray); font-weight: 400;">За май <i class="ph ph-caret-down"></i></span></div>
+        <div class="inc-exp-row">
+          <div class="ie-item">
+            <h3>Доходы</h3>
+            <div class="amount">112 850 ₽</div>
+            <span class="badge-green">+15,2% к апрелю</span>
+            <div class="custom-bar" style="margin-top: 14px;">
+              <div class="cb-fill green" style="width: 75%;"></div>
+            </div>
+          </div>
+          <div class="ie-item">
+            <h3>Расходы</h3>
+            <div class="amount">86 430 ₽</div>
+            <span class="badge-green" style="background: var(--red-light); color: var(--red-primary);">-3,4% к апрелю</span>
+            <div class="custom-bar" style="margin-top: 14px;">
+              <div class="cb-fill red" style="width: 50%;"></div>
+              <div class="cb-fill red" style="width: 15%; opacity: 0.5; margin-left: 3px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Расходы по категориям</div>
+        <div class="donut-layout">
+          <svg class="svg-donut" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" stroke="#f3f4f6"></circle>
+            <circle cx="50" cy="50" r="40" stroke="#cbd5e1" stroke-dasharray="113 251" stroke-dashoffset="0"></circle>
+            <circle cx="50" cy="50" r="40" stroke="#f472b6" stroke-dasharray="56 251" stroke-dashoffset="-113"></circle>
+            <circle cx="50" cy="50" r="40" stroke="#fbbf24" stroke-dasharray="69 251" stroke-dashoffset="-169"></circle>
+            <circle cx="50" cy="50" r="40" stroke="#34d399" stroke-dasharray="132 251" stroke-dashoffset="-238"></circle>
+            <circle cx="50" cy="50" r="40" stroke="#60a5fa" stroke-dasharray="257 251" stroke-dashoffset="-370"></circle>
+          </svg>
+          
+          <ul class="legend-list">
+            <li class="legend-item"><div class="left"><span class="dot" style="background: #60a5fa;"></span> Жильё</div><strong>41%</strong></li>
+            <li class="legend-item"><div class="left"><span class="dot" style="background: #34d399;"></span> Еда</div><strong>21%</strong></li>
+            <li class="legend-item"><div class="left"><span class="dot" style="background: #fbbf24;"></span> Транспорт</div><strong>11%</strong></li>
+            <li class="legend-item"><div class="left"><span class="dot" style="background: #f472b6;"></span> Развлечения</div><strong>9%</strong></li>
+            <li class="legend-item"><div class="left"><span class="dot" style="background: #cbd5e1;"></span> Другое</div><strong>18%</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Последние операции</div>
+        <div class="tx-list">
+          <div class="tx-item">
+            <div class="tx-left">
+              <div class="tx-icon" style="background: var(--green-light); color: var(--green-primary);"><i class="ph-fill ph-money"></i></div>
+              Зарплата
+            </div>
+            <div class="tx-right text-green">+112 850 ₽</div>
+          </div>
+          <div class="tx-item">
+            <div class="tx-left">
+              <div class="tx-icon" style="background: #e0e7ff; color: #4f46e5;"><i class="ph-fill ph-arrows-left-right"></i></div>
+              Перевод на инвестиции
+            </div>
+            <div class="tx-right">-30 000 ₽</div>
+          </div>
+          <div class="tx-item">
+            <div class="tx-left">
+              <div class="tx-icon" style="background: #ffedd5; color: #ea580c;"><i class="ph-fill ph-shopping-cart"></i></div>
+              Супермаркет
+            </div>
+            <div class="tx-right">-1 650 ₽</div>
+          </div>
+          <div class="tx-item">
+            <div class="tx-left">
+              <div class="tx-icon" style="background: #fce7f3; color: #db2777;"><i class="ph-fill ph-coffee"></i></div>
+              Кофейня
+            </div>
+            <div class="tx-right">-450 ₽</div>
+          </div>
+          <div class="tx-item">
+            <div class="tx-left">
+              <div class="tx-icon" style="background: #e0f2fe; color: #0369a1;"><i class="ph-fill ph-spotify-logo"></i></div>
+              Spotify
+            </div>
+            <div class="tx-right">-169 ₽</div>
+          </div>
+        </div>
+        <a href="transactions.html" class="link-all">Все операции <i class="ph ph-arrow-right"></i></a>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
