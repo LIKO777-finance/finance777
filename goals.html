@@ -1,42 +1,434 @@
-<main class="content-wrapper">
-  <div class="header">
-    <div class="header-title">
-      <h1>Цели</h1>
-      <p>Достигай большего. Один шаг за другим 🚀</p>
-    </div>
-    <button class="btn btn-primary"><i class="ph ph-plus"></i> Новая цель</button>
-  </div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Цели | FinFlow</title>
+  
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-  <div class="summary-grid">
-    <div class="sum-card">
-      <div class="sum-card-header">Всего целей</div>
-      <div class="sum-card-val dark">7</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-card-header">Накоплено</div>
-      <div class="sum-card-val dark">1 274 250 ₽</div>
-    </div>
-  </div>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      
+      --green: #10b981;
+      --green-bg: #d1fae5;
+      --red: #ef4444;
+      --red-bg: #fee2e2;
+      --orange: #f59e0b;
+      --orange-bg: #fef3c7;
+      --purple: #a855f7;
+      --purple-bg: #f3e8ff;
+      --blue: #3b82f6;
+    }
 
-  <div class="goals-list">
-    <div class="goal-card">
-      <div class="goal-info">
-        <div class="goal-icon"><i class="ph-fill ph-airplane"></i></div>
-        <div>
-          <h4>Отпуск в сентябре</h4>
-          <p>Мечты • Долгосрочная</p>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    
+    body { background-color: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+    /* === ЛЕВЫЙ САЙДБАР === */
+    .sidebar {
+      width: 260px; background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 24px 16px; flex-shrink: 0;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 1.2rem; font-weight: 700; margin-bottom: 40px; padding-left: 8px; }
+    
+    .nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px; 
+      border-radius: 12px; color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.2s;
+    }
+    .nav-item i { font-size: 22px; }
+    .nav-item.active { background: var(--purple-bg); color: var(--primary); }
+    .nav-item:hover:not(.active) { background: var(--bg); color: var(--text-main); }
+
+    .user-profile { display: flex; align-items: center; gap: 12px; padding: 12px; border-top: 1px solid var(--border); margin-top: auto; cursor: pointer; }
+    .user-profile img { width: 40px; height: 40px; border-radius: 50%; }
+    .user-info h5 { font-size: 0.9rem; font-weight: 600; }
+    .user-info p { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* === ЦЕНТРАЛЬНАЯ ЧАСТЬ === */
+    .content-wrapper { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 24px 32px; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .header-title h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px;}
+    .header-title p { color: var(--text-muted); font-size: 0.9rem; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    
+    .btn { padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; border: none; transition: 0.2s; }
+    .btn-outline { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); }
+    .btn-outline:hover { background: var(--bg); }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    /* Виджеты статистики */
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .sum-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; position: relative; overflow: hidden; }
+    .sum-card h4 { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; }
+    .sum-card .val { font-size: 1.5rem; font-weight: 800; color: var(--text-main); }
+    .sum-card .sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+    .sum-icon { position: absolute; right: 20px; top: 20px; font-size: 28px; color: var(--purple); opacity: 0.2; }
+
+    /* Табы и фильтры */
+    .controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+    .tabs { display: flex; gap: 24px; }
+    .tab { background: transparent; border: none; font-size: 0.95rem; font-weight: 600; color: var(--text-muted); cursor: pointer; position: relative; padding-bottom: 16px; margin-bottom: -17px; }
+    .tab.active { color: var(--primary); }
+    .tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px 2px 0 0; }
+    
+    .filters { display: flex; gap: 12px; }
+
+    /* СПИСОК ЦЕЛЕЙ */
+    .goals-list { display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; }
+    .goal-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 24px; display: grid; grid-template-columns: 80px 1.2fr 2fr 1fr 40px; gap: 20px; align-items: center;
+      transition: 0.2s;
+    }
+    .goal-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    
+    .goal-img { width: 80px; height: 80px; border-radius: 16px; object-fit: cover; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+    
+    .goal-info h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
+    .goal-info p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
+    .tags { display: flex; gap: 8px; }
+    .tag { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; background: var(--bg); color: var(--text-muted); }
+    
+    .goal-amounts { display: flex; flex-direction: column; justify-content: center; width: 100%; }
+    .amounts-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+    .amt-block p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+    .amt-block strong { font-size: 1.05rem; font-weight: 700; color: var(--text-main); }
+    
+    .progress-track { width: 100%; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; position: relative; }
+    .progress-fill { height: 100%; border-radius: 4px; }
+    
+    .goal-remaining p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+    .goal-remaining strong { font-size: 1.05rem; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 8px; }
+    .deadline { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    
+    .action-btn { background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; padding: 4px; border-radius: 8px; }
+    .action-btn:hover { background: var(--bg); color: var(--text-main); }
+
+    .btn-add-full { width: 100%; padding: 16px; background: transparent; border: 2px dashed var(--border); border-radius: 20px; color: var(--primary); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: 0.2s; }
+    .btn-add-full:hover { border-color: var(--primary); background: var(--purple-bg); }
+
+    /* === ПРАВАЯ ПАНЕЛЬ === */
+    .right-sidebar { width: 340px; background: var(--surface); border-left: 1px solid var(--border); padding: 24px; overflow-y: auto; flex-shrink: 0; }
+    
+    .rs-section { margin-bottom: 32px; }
+    .rs-section h3 { font-size: 1rem; color: var(--text-main); font-weight: 700; margin-bottom: 16px; }
+    
+    .chart-container { display: flex; align-items: center; gap: 20px; }
+    .main-donut { width: 100px; height: 100px; border-radius: 50%; position: relative; flex-shrink: 0; }
+    .main-donut::after { content: ''; position: absolute; inset: 20px; background: var(--surface); border-radius: 50%; }
+    .legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .leg-item { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+    .leg-item span { display: flex; align-items: center; gap: 6px; }
+    .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .mini-card { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .mini-card:last-child { border-bottom: none; }
+    .mc-left { display: flex; align-items: center; gap: 12px; }
+    .mc-img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+    .mc-info h5 { font-size: 0.85rem; font-weight: 600; }
+    .mc-info p { font-size: 0.75rem; color: var(--text-muted); }
+    .mc-right { font-size: 0.8rem; font-weight: 600; color: var(--green); }
+
+    .advice-card { background: var(--green-bg); border-radius: 16px; padding: 16px; position: relative; overflow: hidden; margin-top: 24px; }
+    .advice-card h4 { font-size: 0.95rem; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+    .advice-card p { font-size: 0.85rem; color: var(--text-main); line-height: 1.4; width: 80%; }
+    .advice-card img { position: absolute; right: -5px; bottom: -5px; width: 60px; opacity: 0.8; }
+
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo">
+      <i class="ph-fill ph-shapes" style="color: var(--primary); font-size: 28px;"></i> FinFlow
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-item"><i class="ph ph-house"></i> Главная</a>
+      <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
+      <a href="#" class="nav-item"><i class="ph ph-chart-pie"></i> Бюджет</a>
+      <a href="#" class="nav-item"><i class="ph ph-wallet"></i> Счета</a>
+      <a href="#" class="nav-item"><i class="ph ph-trend-up"></i> Инвестиции</a>
+      <a href="goals.html" class="nav-item active"><i class="ph ph-target"></i> Цели</a>
+      <a href="#" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
+    </nav>
+    <div class="user-profile">
+      <img src="https://i.pravatar.cc/150?img=11" alt="Avatar">
+      <div class="user-info">
+        <h5>Андрей Иванов</h5>
+        <p>Профиль</p>
+      </div>
+      <i class="ph ph-caret-down" style="margin-left: auto; color: var(--text-muted);"></i>
+    </div>
+  </aside>
+
+  <main class="content-wrapper">
+    <div class="header">
+      <div class="header-title">
+        <h1>Цели</h1>
+        <p>Достигай большего. Один шаг за другим 🚀</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline"><i class="ph ph-download-simple"></i> Шаблоны целей</button>
+        <button class="btn btn-primary"><i class="ph ph-plus"></i> Новая цель</button>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="sum-card">
+        <h4>Всего целей</h4>
+        <div class="val">7</div>
+        <div class="sub">активных целей</div>
+        <i class="ph-fill ph-target sum-icon"></i>
+      </div>
+      <div class="sum-card">
+        <h4>Общая цель</h4>
+        <div class="val">3 920 000 ₽</div>
+        <div class="sub"><i class="ph ph-trend-up"></i> в эквиваленте</div>
+      </div>
+      <div class="sum-card">
+        <h4>Накоплено</h4>
+        <div class="val">1 274 250 ₽</div>
+        <div class="sub">32,5% от общей цели</div>
+      </div>
+      <div class="sum-card">
+        <h4>Средний прогресс</h4>
+        <div class="val">46%</div>
+        <svg style="position:absolute; right:10px; bottom:20px; width:80px; height:30px;" viewBox="0 0 100 30"><path d="M0,25 Q10,20 20,25 T40,15 T60,20 T80,5 T100,10" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <div class="tabs">
+        <button class="tab active">Все цели</button>
+        <button class="tab">В процессе</button>
+        <button class="tab">Достигнуты</button>
+        <button class="tab">Отменённые</button>
+      </div>
+      <div class="filters">
+        <button class="btn btn-outline"><i class="ph ph-faders"></i> По дате создания</button>
+        <div style="display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); padding: 4px; border-radius: 10px;">
+          <button style="border:none; background:var(--bg); padding:6px; border-radius:6px; cursor:pointer;"><i class="ph-fill ph-squares-four" style="font-size:18px;"></i></button>
+          <button style="border:none; background:transparent; color:var(--text-muted); padding:6px; border-radius:6px; cursor:pointer;"><i class="ph ph-list" style="font-size:18px;"></i></button>
         </div>
       </div>
-      <div class="goal-progress">
-        <div class="progress-labels">
-          <span>Накоплено: 3 250 Br</span>
-          <span>Цель: 6 500 Br</span>
-        </div>
-        <div class="progress-bar"><div class="fill" style="width: 50%;"></div></div>
+    </div>
+
+    <div class="goals-list" id="goalsContainer">
       </div>
-      <div class="goal-deadline">
-        <span>Осталось 3 месяца</span>
+    
+    <button class="btn-add-full"><i class="ph ph-plus"></i> Добавить новую цель</button>
+
+  </main>
+
+  <aside class="right-sidebar">
+    
+    <div class="rs-section">
+      <h3>Распределение целей</h3>
+      <div class="chart-container">
+        <div class="main-donut" style="background: conic-gradient(#8b5cf6 0% 63%, #f59e0b 63% 78%, #10b981 78% 88%, #3b82f6 88% 96%, #e2e8f0 96% 100%);"></div>
+        <div class="legend">
+          <div class="leg-item"><span><div class="leg-dot" style="background: #8b5cf6;"></div> Недвижимость</span> 63%</div>
+          <div class="leg-item"><span><div class="leg-dot" style="background: #f59e0b;"></div> Техника</span> 15%</div>
+          <div class="leg-item"><span><div class="leg-dot" style="background: #10b981;"></div> Путешествия</span> 10%</div>
+          <div class="leg-item"><span><div class="leg-dot" style="background: #3b82f6;"></div> Безопасность</span> 8%</div>
+          <div class="leg-item"><span><div class="leg-dot" style="background: #e2e8f0;"></div> Другое</span> 4%</div>
+        </div>
       </div>
     </div>
-  </div>
-</main>
+
+    <div class="rs-section">
+      <h3>Ближайшие цели</h3>
+      <div>
+        <div class="mini-card">
+          <div class="mc-left">
+            <div class="mc-img"><i class="ph ph-camera"></i></div>
+            <div class="mc-info">
+              <h5>Новая камера</h5>
+              <p>10 июня 2026</p>
+            </div>
+          </div>
+          <div class="mc-right">15 дней</div>
+        </div>
+        <div class="mini-card">
+          <div class="mc-left">
+            <div class="mc-img"><i class="ph ph-laptop"></i></div>
+            <div class="mc-info">
+              <h5>MacBook Air M2</h5>
+              <p>15 июля 2026</p>
+            </div>
+          </div>
+          <div class="mc-right" style="color: var(--text-main);">1,5 месяца</div>
+        </div>
+        <div class="mini-card">
+          <div class="mc-left">
+            <div class="mc-img"><i class="ph ph-airplane-tilt"></i></div>
+            <div class="mc-info">
+              <h5>Отпуск в сентябре</h5>
+              <p>30 сент. 2026</p>
+            </div>
+          </div>
+          <div class="mc-right" style="color: var(--text-main);">3 месяца</div>
+        </div>
+      </div>
+      <button class="btn btn-outline" style="width: 100%; justify-content: center; margin-top: 16px;">Смотреть все</button>
+    </div>
+
+    <div class="advice-card">
+      <h4>Совет на сегодня</h4>
+      <p>Ты откладываешь больше, чем 78% пользователей в этом месяце! 💪</p>
+      <img src="https://cdn-icons-png.flaticon.com/512/4762/4762311.png" alt="Mascot">
+    </div>
+
+  </aside>
+
+  <script>
+    const goalsData = [
+      {
+        title: "Отпуск в сентябре 🌴",
+        category: "Мечты",
+        type: "Долгосрочная",
+        currency: "BYN",
+        sym: "Br",
+        target: 6500,
+        saved: 3250,
+        deadlineDate: "30 сент. 2026",
+        timeLeft: "Осталось 3 месяца",
+        imgHtml: '<img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=150&auto=format&fit=crop" style="width:100%;height:100%;border-radius:16px;object-fit:cover;">',
+        color: "#10b981" // Зеленый
+      },
+      {
+        title: "MacBook Air M2",
+        category: "Техника",
+        type: "Среднесрочная",
+        currency: "BYN",
+        sym: "Br",
+        target: 6500,
+        saved: 4850,
+        deadlineDate: "15 июля 2026",
+        timeLeft: "Осталось 1,5 месяца",
+        imgHtml: '<img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=150&auto=format&fit=crop" style="width:100%;height:100%;border-radius:16px;object-fit:cover;">',
+        color: "#10b981"
+      },
+      {
+        title: "Квартира (первый взнос)",
+        category: "Недвижимость",
+        type: "Долгосрочная",
+        currency: "RUB",
+        sym: "₽",
+        target: 2500000,
+        saved: 645300,
+        deadlineDate: "31 дек. 2027",
+        timeLeft: "Осталось 1,5 года",
+        imgHtml: '<img src="https://images.unsplash.com/photo-1449844908441-8829872d2607?w=150&auto=format&fit=crop" style="width:100%;height:100%;border-radius:16px;object-fit:cover;">',
+        color: "#8b5cf6" // Фиолетовый
+      },
+      {
+        title: "Новая камера",
+        category: "Техника",
+        type: "Краткосрочная",
+        currency: "RUB",
+        sym: "₽",
+        target: 120000,
+        saved: 84300,
+        deadlineDate: "10 июня 2026",
+        timeLeft: "Осталось 15 дней",
+        imgHtml: '<img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=150&auto=format&fit=crop" style="width:100%;height:100%;border-radius:16px;object-fit:cover;">',
+        color: "#f59e0b" // Желтый
+      },
+      {
+        title: "Финансовая подушка",
+        category: "Безопасность",
+        type: "Долгосрочная",
+        currency: "Все валюты",
+        sym: "₽",
+        target: 500000,
+        saved: 312400,
+        deadlineDate: "Без срока",
+        timeLeft: "-",
+        imgHtml: '<div style="background:#d1fae5; width:100%; height:100%; border-radius:16px; display:flex; align-items:center; justify-content:center; color:#10b981; font-size:36px;"><i class="ph-fill ph-plant"></i></div>',
+        color: "#3b82f6" // Синий
+      }
+    ];
+
+    function formatNumber(num) {
+      return num.toLocaleString('ru-RU');
+    }
+
+    function renderGoals() {
+      const container = document.getElementById('goalsContainer');
+      container.innerHTML = '';
+
+      goalsData.forEach((goal, index) => {
+        const percent = Math.floor((goal.saved / goal.target) * 100);
+        const remaining = goal.target - goal.saved;
+        
+        // Значок срока: календарь или галочка, если без срока
+        const dateIcon = goal.deadlineDate === "Без срока" ? "ph-infinity" : "ph-calendar-blank";
+
+        const card = document.createElement('div');
+        card.className = 'goal-card';
+        card.innerHTML = `
+          <div class="goal-img">${goal.imgHtml}</div>
+          
+          <div class="goal-info">
+            <h3>${goal.title}</h3>
+            <p>${goal.category}</p>
+            <div class="tags">
+              <span class="tag">${goal.currency}</span>
+              <span class="tag">${goal.type}</span>
+            </div>
+          </div>
+          
+          <div class="goal-amounts">
+            <div class="amounts-header">
+              <div class="amt-block">
+                <p>Цель</p>
+                <strong>${formatNumber(goal.target)} ${goal.sym}</strong>
+              </div>
+              <div class="amt-block">
+                <p>Накоплено</p>
+                <strong>${formatNumber(goal.saved)} ${goal.sym}</strong>
+              </div>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: ${percent}%; background: ${goal.color};"></div>
+            </div>
+            <div style="text-align: right; font-size: 0.8rem; font-weight: 600; color: var(--text-main); margin-top: 6px;">${percent}%</div>
+          </div>
+          
+          <div class="goal-remaining">
+            <p>До цели</p>
+            <strong>${formatNumber(remaining)} ${goal.sym}</strong>
+            <div class="deadline"><i class="ph ${dateIcon}"></i> ${goal.deadlineDate}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">${goal.timeLeft}</div>
+          </div>
+          
+          <button class="action-btn" onclick="editGoal('${goal.title}')" title="Редактировать"><i class="ph ph-dots-three"></i></button>
+        `;
+        
+        container.appendChild(card);
+      });
+    }
+
+    // Обработчик для кнопки трех точек
+    function editGoal(title) {
+      alert(`Здесь откроется меню редактирования суммы для цели: "${title}"`);
+    }
+
+    renderGoals();
+  </script>
+</body>
+</html>
