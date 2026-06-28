@@ -1,58 +1,124 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>В разработке — Финансы</title>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    :root {
-      --bg-main: #f8fafc; --surface: #ffffff; --text-dark: #0f172a; --text-gray: #64748b;
-      --green-primary: #10b981; --green-light: #d1fae5; --border: #e2e8f0; --radius-lg: 24px;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-    body { background-color: var(--bg-main); color: var(--text-dark); display: flex; min-height: 100vh; }
-    
-    /* САЙДБАР (Такой же как везде) */
-    .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; z-index: 10; }
-    .logo { display: flex; align-items: center; gap: 12px; font-size: 1.1rem; font-weight: 700; margin-bottom: 40px; color: var(--text-dark); }
-    .logo i { font-size: 28px; color: var(--green-primary); }
-    .nav { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; color: var(--text-gray); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.2s; }
-    .nav-item i { font-size: 22px; }
-    .nav-item:hover { background: #f1f5f9; color: var(--text-dark); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinFlow - Счета</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    /* КОНТЕНТ ЗАГЛУШКИ */
-    .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; }
-    .main i { font-size: 64px; color: var(--text-gray); opacity: 0.5; }
-    .main h1 { font-size: 2rem; font-weight: 700; }
-    .main p { color: var(--text-gray); font-size: 1.1rem; max-width: 400px; line-height: 1.5; }
-  </style>
+        :root {
+            --bg-main: #f8fafc;
+            --surface: #ffffff;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+            --purple-primary: #7c3aed;
+            --purple-light: #f3e8ff;
+            --green-primary: #10b981;
+            --border-color: #e2e8f0;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-dark); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Сайдбар - стандартный для проекта */
+        .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px 0; }
+        .nav-menu { padding: 0 16px; flex-grow: 1; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); color: var(--text-gray); text-decoration: none; font-weight: 500; }
+        .nav-item.active { background-color: var(--purple-light); color: var(--purple-primary); }
+        
+        /* Контент */
+        .main-content { flex-grow: 1; padding: 32px 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+        
+        /* KPI Карточки (4 шт) */
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .kpi-card { background: var(--surface); padding: 20px; border-radius: var(--radius-lg); border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .kpi-title { font-size: 13px; color: var(--text-gray); margin-bottom: 8px; }
+        .kpi-value { font-size: 20px; font-weight: 700; }
+        .kpi-trend { font-size: 12px; color: var(--green-primary); margin-top: 4px; }
+
+        /* Основная сетка */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        .card { background: var(--surface); border-radius: var(--radius-lg); padding: 24px; border: 1px solid rgba(0,0,0,0.03); }
+        
+        /* Группы счетов */
+        .section-header { font-size: 16px; font-weight: 600; margin-bottom: 16px; margin-top: 24px; }
+        .account-item { display: grid; grid-template-columns: 250px 150px 150px 1fr 40px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-color); }
+        .account-name { font-weight: 600; }
+        .account-bank { font-size: 12px; color: var(--text-gray); }
+        
+        /* Виджеты справа */
+        .widget-card { background: var(--surface); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+        .donut-chart { width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(var(--purple-primary) 0% 55%, var(--green-primary) 55% 94%, #ef4444 94% 100%); margin: 0 auto; }
+        
+        .promo-box { background: var(--purple-light); padding: 20px; border-radius: var(--radius-lg); text-align: center; }
+    </style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <div class="logo"><i class="ph-fill ph-plant"></i> Финансы. Путь к свободе</div>
-    <nav class="nav">
-      <a href="index.html" class="nav-item"><i class="ph ph-house"></i> Главная</a>
-      <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
-      <a href="budget.html" class="nav-item"><i class="ph ph-chart-pie"></i> Бюджет</a>
-      <a href="accounts.html" class="nav-item"><i class="ph ph-wallet"></i> Счета</a>
-      <a href="investments.html" class="nav-item"><i class="ph ph-trend-up"></i> Инвестиции</a>
-      <a href="goals.html" class="nav-item"><i class="ph ph-target"></i> Цели</a>
-      <a href="analytics.html" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
-      <a href="reports.html" class="nav-item"><i class="ph ph-file-text"></i> Отчеты</a>
-      <a href="debts.html" class="nav-item"><i class="ph ph-hand-coins"></i> Долги</a>
-      <a href="settings.html" class="nav-item"><i class="ph ph-gear"></i> Настройки</a>
-    </nav>
-  </aside>
+    <aside class="sidebar">
+        <div style="padding: 0 24px; font-weight: 700; margin-bottom: 32px;">FinFlow</div>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-item"><i class="ph ph-house"></i> Главная</a>
+            <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
+            <a href="budget.html" class="nav-item"><i class="ph ph-wallet"></i> Бюджет</a>
+            <a href="accounts.html" class="nav-item active"><i class="ph ph-credit-card"></i> Счета</a>
+            <a href="debts.html" class="nav-item"><i class="ph ph-hand-coins"></i> Долги</a>
+        </nav>
+    </aside>
 
-  <main class="main">
-    <i class="ph-fill ph-cone"></i>
-    <h1>Страница в разработке</h1>
-    <p>Скоро здесь появится крутой функционал. А пока можешь вернуться в уже готовые разделы.</p>
-  </main>
+    <main class="main-content">
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Счета</h1>
+            <div style="display: flex; gap: 12px;">
+                <button style="padding: 10px 16px; background: var(--purple-primary); color: white; border: none; border-radius: 8px;">+ Добавить счёт</button>
+            </div>
+        </header>
 
+        <!-- KPI -->
+        <div class="kpi-row">
+            <div class="kpi-card"><div class="kpi-title">Всего на счетах</div><div class="kpi-value">4 280 750 ₽</div><div class="kpi-trend">+128 200 ₽ (+3,08%)</div></div>
+            <div class="kpi-card"><div class="kpi-title">Текущие счета</div><div class="kpi-value">2 350 450 ₽</div><div class="kpi-trend">3 счета</div></div>
+            <div class="kpi-card"><div class="kpi-title">Накопительные</div><div class="kpi-value">1 680 300 ₽</div><div class="kpi-trend">2 счета</div></div>
+            <div class="kpi-card"><div class="kpi-title">Кредитные счета</div><div class="kpi-value">-250 000 ₽</div><div class="kpi-trend">1 счёт</div></div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="section-header">Текущие счета</div>
+                <div class="account-item">
+                    <div><div class="account-name">Основной счёт BYN</div><div class="account-bank">Belarusbank</div></div>
+                    <div><div style="font-size: 12px;">Доступно</div><div style="font-weight: 600;">75 430,00 Br</div></div>
+                    <div><div style="font-size: 12px;">Всего</div><div style="font-weight: 600;">75 430,00 Br</div></div>
+                    <div style="color: var(--green-primary);">↗</div>
+                    <div><i class="ph ph-dots-three-vertical"></i></div>
+                </div>
+                
+                <div class="section-header">Накопительные счета</div>
+                <div class="account-item">
+                    <div><div class="account-name">Накопительный счёт</div><div class="account-bank">Отпуск в сентябре</div></div>
+                    <div><div style="font-size: 12px;">Доступно</div><div style="font-weight: 600;">1 250 000,00 Br</div></div>
+                    <div><div style="font-size: 12px;">До цели</div><div style="font-weight: 600;">3 250 000 Br</div></div>
+                    <div style="background: var(--bg-main); height: 6px; width: 80px; border-radius: 4px;"><div style="width: 38%; background: var(--green-primary); height: 100%;"></div></div>
+                    <div><i class="ph ph-dots-three-vertical"></i></div>
+                </div>
+            </div>
+
+            <!-- Правая колонка -->
+            <div>
+                <div class="widget-card">
+                    <h3>Распределение средств</h3>
+                    <div class="donut-chart"></div>
+                </div>
+                <div class="promo-box">
+                    <p style="font-weight: 600; margin-bottom: 8px;">Копите проще</p>
+                    <p style="font-size: 13px; color: var(--text-gray);">Создайте цель и перенаправляйте часть дохода автоматически</p>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
