@@ -22,8 +22,8 @@
             --yellow-primary: #f59e0b;
             --red-primary: #ef4444;
             --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
@@ -107,7 +107,6 @@
             font-size: 20px;
         }
 
-        /* Низ сайдбара (Отчет и профиль) */
         .sidebar-bottom {
             padding: 0 16px;
             display: flex;
@@ -155,7 +154,7 @@
             height: 36px;
             border-radius: 50%;
             background-color: #cbd5e1;
-            background-image: url('https://i.pravatar.cc/100?img=11'); /* Заглушка аватара */
+            background-image: url('https://i.pravatar.cc/100?img=11');
             background-size: cover;
         }
 
@@ -281,92 +280,115 @@
             border: 2px solid var(--surface);
         }
 
-        /* --- Карточки KPI сверху --- */
+        /* --- Карточки KPI (5 в ряд как на фото) --- */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
         }
 
-        .card {
+        .kpi-card {
             background: var(--surface);
             border-radius: var(--radius-lg);
-            padding: 24px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid rgba(0,0,0,0.02);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0,0,0,0.03);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
+            min-height: 110px;
         }
 
-        .kpi-card-content {
+        .kpi-card-header {
+            color: var(--text-gray);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .kpi-card-main {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-end;
+            margin-bottom: 12px;
         }
 
-        .kpi-info {
+        .kpi-value-block {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
 
-        .kpi-title {
-            color: var(--text-gray);
-            font-size: 13px;
-            font-weight: 500;
-        }
-
         .kpi-value {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: var(--text-dark);
         }
 
         .kpi-sub {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-light);
-            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .kpi-progress {
+            height: 4px;
+            background: var(--bg-main);
+            border-radius: 2px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .kpi-progress-fill {
+            height: 100%;
+            border-radius: 2px;
         }
 
         .kpi-icon-wrapper {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
+            background: var(--purple-light);
+            color: var(--purple-primary);
         }
 
-        .bg-purple-light { background: var(--purple-light); color: var(--purple-primary); }
-        .bg-green-light { background: var(--green-light); color: var(--green-primary); }
-
-        /* Круговая диаграмма для KPI */
-        .circular-chart {
-            width: 56px;
-            height: 56px;
+        /* Круговая диаграмма для KPI "Потрачено" */
+        .circular-chart-sm {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: conic-gradient(var(--green-primary) 64%, var(--bg-main) 0);
+            background: conic-gradient(var(--green-primary) 64.8%, var(--bg-main) 0);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .circular-chart::after {
+        .circular-chart-sm::after {
             content: "64%";
             position: absolute;
-            width: 44px;
-            height: 44px;
+            width: 30px;
+            height: 30px;
             background: var(--surface);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 700;
             color: var(--text-dark);
+        }
+
+        .text-green { color: var(--green-primary); }
+
+        /* График-спарклайн для карточки экономии */
+        .sparkline svg {
+            display: block;
+            margin-bottom: 4px;
         }
 
         /* --- Сетка основного контента --- */
@@ -386,7 +408,15 @@
             align-items: center;
         }
 
-        /* Таблица/Список бюджета (без иконок) */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        /* Таблица Бюджета (без иконок, строгая) */
         .budget-list {
             display: flex;
             flex-direction: column;
@@ -465,7 +495,7 @@
 
         /* --- Правая колонка --- */
         
-        /* График бюджета */
+        /* График распределения */
         .chart-container {
             display: flex;
             align-items: center;
@@ -508,7 +538,7 @@
             line-height: 1.4;
         }
 
-        /* Строки платежей (без иконок и дат) */
+        /* Предстоящие платежи (без дат и иконок) */
         .payment-list {
             display: flex;
             flex-direction: column;
@@ -605,63 +635,77 @@
         </header>
 
         <div class="kpi-grid">
-            <div class="card">
-                <div class="kpi-card-content">
-                    <div class="kpi-info">
-                        <span class="kpi-title">Общий бюджет</span>
-                        <span class="kpi-value">205 000 ₽</span>
-                        <span class="kpi-sub">на май</span>
+            
+            <div class="kpi-card">
+                <div class="kpi-card-header">Всего бюджетов</div>
+                <div class="kpi-card-main" style="margin-bottom: 0;">
+                    <div class="kpi-value-block">
+                        <span class="kpi-value">6</span>
+                        <span class="kpi-sub">активных бюджетов</span>
                     </div>
-                    <div class="kpi-icon-wrapper bg-purple-light">
+                    <div class="kpi-icon-wrapper">
                         <i class="ph-fill ph-wallet"></i>
                     </div>
                 </div>
             </div>
             
-            <div class="card">
-                <div class="kpi-card-content">
-                    <div class="kpi-info">
-                        <span class="kpi-title">Потрачено</span>
-                        <span class="kpi-value">132 450 ₽</span>
-                        <span class="kpi-sub">64% от бюджета</span>
-                    </div>
-                    <div class="circular-chart"></div>
+            <div class="kpi-card">
+                <div class="kpi-card-header">План на месяц</div>
+                <div class="kpi-value-block">
+                    <span class="kpi-value">152 000 ₽</span>
+                    <span class="kpi-sub">100% от плана</span>
+                </div>
+                <div class="kpi-progress">
+                    <div class="kpi-progress-fill" style="width: 100%; background: var(--purple-primary);"></div>
                 </div>
             </div>
             
-            <div class="card">
-                <div class="kpi-card-content">
-                    <div class="kpi-info">
-                        <span class="kpi-title">Осталось</span>
-                        <span class="kpi-value">72 550 ₽</span>
-                        <span class="kpi-sub">на 18 дней</span>
+            <div class="kpi-card">
+                <div class="kpi-card-header">Потрачено</div>
+                <div class="kpi-card-main" style="margin-bottom: 6px;">
+                    <div class="kpi-value-block">
+                        <span class="kpi-value">98 430 ₽</span>
+                        <span class="kpi-sub">64,8% от плана</span>
                     </div>
-                    <div class="kpi-icon-wrapper bg-green-light">
-                        <i class="ph-fill ph-wallet"></i>
-                    </div>
+                    <div class="circular-chart-sm"></div>
+                </div>
+                <div class="kpi-progress">
+                    <div class="kpi-progress-fill" style="width: 64.8%; background: var(--green-primary);"></div>
                 </div>
             </div>
             
-            <div class="card">
-                <div class="kpi-card-content">
-                    <div class="kpi-info">
-                        <span class="kpi-title">Доступно в день</span>
-                        <span class="kpi-value">4 030 ₽</span>
-                        <span class="kpi-sub">до конца месяца</span>
+            <div class="kpi-card">
+                <div class="kpi-card-header">Осталось</div>
+                <div class="kpi-value-block">
+                    <span class="kpi-value">53 570 ₽</span>
+                    <span class="kpi-sub">35,2% от плана</span>
+                </div>
+                <div class="kpi-progress">
+                    <div class="kpi-progress-fill" style="width: 35.2%; background: var(--blue-primary);"></div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-card-header">Экономия за май</div>
+                <div class="kpi-card-main" style="margin-bottom: 0;">
+                    <div class="kpi-value-block">
+                        <span class="kpi-value text-green">+18 750 ₽</span>
+                        <span class="kpi-sub">+23,6% к апрелю</span>
                     </div>
-                    <div class="kpi-icon-wrapper" style="background: #fffbeb; color: var(--yellow-primary);">
-                        <i class="ph-fill ph-calendar-blank"></i>
+                    <div class="sparkline">
+                        <svg width="40" height="24" viewBox="0 0 40 24">
+                            <path d="M2,20 L10,12 L18,16 L38,4" fill="none" stroke="var(--green-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                     </div>
                 </div>
             </div>
+
         </div>
 
         <div class="dashboard-grid">
             
             <div class="card">
-                <div class="section-title">
-                    Бюджеты на май
-                </div>
+                <div class="section-title">Бюджеты на май</div>
                 
                 <div class="budget-list">
                     <div class="budget-header-row">
