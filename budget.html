@@ -9,17 +9,21 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         :root {
-            --bg-main: #f4f6f9;
+            --bg-main: #f8fafc;
             --surface: #ffffff;
-            --text-dark: #111827;
-            --text-gray: #6b7280;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+            --text-light: #94a3b8;
+            --purple-primary: #7c3aed;
+            --purple-light: #f3e8ff;
             --green-primary: #10b981;
-            --purple-primary: #8b5cf6;
-            --purple-light: #ede9fe;
-            --red-primary: #ef4444;
+            --green-light: #d1fae5;
             --blue-primary: #3b82f6;
-            --border-color: #e5e7eb;
+            --yellow-primary: #f59e0b;
+            --red-primary: #ef4444;
+            --border-color: #e2e8f0;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
@@ -40,7 +44,7 @@
             overflow: hidden;
         }
 
-        /* Сайдбар */
+        /* --- Сайдбар --- */
         .sidebar {
             width: 260px;
             background-color: var(--surface);
@@ -48,6 +52,7 @@
             display: flex;
             flex-direction: column;
             padding: 24px 0;
+            z-index: 10;
         }
 
         .logo {
@@ -58,7 +63,7 @@
             font-size: 20px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 40px;
+            margin-bottom: 32px;
         }
 
         .logo i {
@@ -69,7 +74,7 @@
         .nav-menu {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             padding: 0 16px;
             flex-grow: 1;
         }
@@ -83,6 +88,7 @@
             color: var(--text-gray);
             text-decoration: none;
             font-weight: 500;
+            font-size: 15px;
             transition: all 0.2s;
         }
 
@@ -94,13 +100,80 @@
         .nav-item.active {
             background-color: var(--purple-light);
             color: var(--purple-primary);
+            font-weight: 600;
         }
 
         .nav-item i {
             font-size: 20px;
         }
 
-        /* Основной контент */
+        /* Низ сайдбара (Отчет и профиль) */
+        .sidebar-bottom {
+            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .monthly-report {
+            background-color: var(--purple-light);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .monthly-report-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--purple-primary);
+        }
+
+        .monthly-report-sub {
+            font-size: 11px;
+            color: var(--text-gray);
+            margin-top: 2px;
+        }
+
+        .monthly-report i {
+            color: var(--purple-primary);
+            font-size: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 8px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+            background-image: url('https://i.pravatar.cc/100?img=11'); /* Заглушка аватара */
+            background-size: cover;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        /* --- Основной контент --- */
         .main-content {
             flex-grow: 1;
             padding: 32px 40px;
@@ -114,12 +187,39 @@
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-end;
+            margin-bottom: 8px;
         }
 
         .page-title h1 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .page-title p {
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .month-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-primary {
@@ -129,18 +229,59 @@
             padding: 10px 20px;
             border-radius: var(--radius-sm);
             font-weight: 500;
+            font-size: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: background-color 0.2s;
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-primary:hover {
-            opacity: 0.9;
+            background-color: #6d28d9;
         }
 
-        /* Карточки KPI сверху */
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: 16px;
+        }
+
+        .icon-btn {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-gray);
+            cursor: pointer;
+            font-size: 20px;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--red-primary);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--surface);
+        }
+
+        /* --- Карточки KPI сверху --- */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -150,19 +291,24 @@
         .card {
             background: var(--surface);
             border-radius: var(--radius-lg);
-            padding: 20px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(0,0,0,0.02);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center;
         }
 
-        .kpi-header {
+        .kpi-card-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+        }
+
+        .kpi-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .kpi-title {
@@ -171,29 +317,37 @@
             font-weight: 500;
         }
 
-        .kpi-icon {
-            font-size: 20px;
-            color: var(--text-gray);
-        }
-
         .kpi-value {
             font-size: 24px;
             font-weight: 700;
+            color: var(--text-dark);
         }
 
-        /* Карточка "Потрачено" с круговой диаграммой */
-        .spent-card-content {
+        .kpi-sub {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .kpi-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            justify-content: center;
+            font-size: 24px;
         }
 
+        .bg-purple-light { background: var(--purple-light); color: var(--purple-primary); }
+        .bg-green-light { background: var(--green-light); color: var(--green-primary); }
+
+        /* Круговая диаграмма для KPI */
         .circular-chart {
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            /* 64% заполнено пурпурным */
-            background: conic-gradient(var(--purple-primary) 64%, var(--bg-main) 0);
+            background: conic-gradient(var(--green-primary) 64%, var(--bg-main) 0);
             position: relative;
             display: flex;
             align-items: center;
@@ -215,7 +369,7 @@
             color: var(--text-dark);
         }
 
-        /* Сетка основного контента */
+        /* --- Сетка основного контента --- */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -224,20 +378,35 @@
         }
 
         .section-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* Строки бюджета (без иконок) */
+        /* Таблица/Список бюджета (без иконок) */
         .budget-list {
             display: flex;
             flex-direction: column;
         }
 
+        .budget-header-row {
+            display: grid;
+            grid-template-columns: 140px 1fr 90px 90px;
+            gap: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .text-right { text-align: right; }
+
         .budget-item {
             display: grid;
-            grid-template-columns: 120px 1fr 100px;
+            grid-template-columns: 140px 1fr 90px 90px;
             align-items: center;
             gap: 16px;
             padding: 16px 0;
@@ -255,8 +424,14 @@
             color: var(--text-dark);
         }
 
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .progress-bg {
-            height: 8px;
+            height: 6px;
             background: var(--bg-main);
             border-radius: 4px;
             overflow: hidden;
@@ -268,10 +443,69 @@
             border-radius: 4px;
         }
 
+        .progress-percent {
+            font-size: 12px;
+            color: var(--text-gray);
+            min-width: 30px;
+        }
+
         .budget-amount {
             font-size: 14px;
             font-weight: 600;
             text-align: right;
+            color: var(--text-dark);
+        }
+
+        .budget-remaining {
+            font-size: 14px;
+            font-weight: 500;
+            text-align: right;
+            color: var(--text-gray);
+        }
+
+        /* --- Правая колонка --- */
+        
+        /* График бюджета */
+        .chart-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+        
+        .large-circular-chart {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--purple-primary) 0% 45%, 
+                var(--green-primary) 45% 70%, 
+                var(--blue-primary) 70% 85%, 
+                var(--yellow-primary) 85% 95%, 
+                #e2e8f0 95% 100%
+            );
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .large-circular-chart::after {
+            content: "205 000 ₽\A Всего";
+            white-space: pre-wrap;
+            text-align: center;
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: var(--surface);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.4;
         }
 
         /* Строки платежей (без иконок и дат) */
@@ -303,7 +537,6 @@
             font-weight: 600;
         }
 
-        .text-green { color: var(--green-primary); }
     </style>
 </head>
 <body>
@@ -324,116 +557,203 @@
             <a href="analytics.html" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
             <a href="settings.html" class="nav-item"><i class="ph ph-gear"></i> Настройки</a>
         </nav>
+        
+        <div class="sidebar-bottom">
+            <div class="monthly-report">
+                <div>
+                    <div class="monthly-report-text">Ежемесячный отчёт</div>
+                    <div class="monthly-report-sub">Май 2026</div>
+                </div>
+                <i class="ph-fill ph-file-pdf"></i>
+            </div>
+            
+            <div class="user-profile">
+                <div class="user-avatar"></div>
+                <div class="user-info">
+                    <div class="user-name">Андрей Иванов</div>
+                    <div class="user-role">Профиль</div>
+                </div>
+                <i class="ph ph-caret-down" style="color: var(--text-gray);"></i>
+            </div>
+        </div>
     </aside>
 
     <main class="main-content">
+        
         <header class="header">
             <div class="page-title">
                 <h1>Бюджет</h1>
+                <p>Планируй деньги. Контролируй результат.</p>
             </div>
-            <button class="btn-primary">
-                <i class="ph ph-plus"></i> Новый бюджет
-            </button>
+            
+            <div class="header-actions">
+                <div class="month-selector">
+                    Май 2026 <i class="ph ph-caret-down"></i>
+                </div>
+                <button class="btn-primary">
+                    <i class="ph ph-plus"></i> Новый бюджет
+                </button>
+                
+                <div class="header-icons">
+                    <div class="icon-btn"><i class="ph ph-magnifying-glass"></i></div>
+                    <div class="icon-btn">
+                        <i class="ph ph-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <div class="kpi-grid">
             <div class="card">
-                <div class="kpi-header">
-                    <span class="kpi-title">Всего бюджетов</span>
-                    <i class="ph ph-files kpi-icon"></i>
-                </div>
-                <div class="kpi-value">6</div>
-            </div>
-            
-            <div class="card">
-                <div class="kpi-header">
-                    <span class="kpi-title">План на месяц</span>
-                    <i class="ph ph-target kpi-icon"></i>
-                </div>
-                <div class="kpi-value">152 000 ₽</div>
-            </div>
-            
-            <div class="card" style="justify-content: center;">
-                <div class="spent-card-content">
-                    <div class="circular-chart"></div>
-                    <div>
-                        <div class="kpi-title" style="margin-bottom: 4px;">Потрачено</div>
-                        <div class="kpi-value" style="font-size: 20px;">98 430 ₽</div>
+                <div class="kpi-card-content">
+                    <div class="kpi-info">
+                        <span class="kpi-title">Общий бюджет</span>
+                        <span class="kpi-value">205 000 ₽</span>
+                        <span class="kpi-sub">на май</span>
+                    </div>
+                    <div class="kpi-icon-wrapper bg-purple-light">
+                        <i class="ph-fill ph-wallet"></i>
                     </div>
                 </div>
             </div>
             
             <div class="card">
-                <div class="kpi-header">
-                    <span class="kpi-title">Экономия за май</span>
-                    <i class="ph ph-piggy-bank kpi-icon text-green"></i>
+                <div class="kpi-card-content">
+                    <div class="kpi-info">
+                        <span class="kpi-title">Потрачено</span>
+                        <span class="kpi-value">132 450 ₽</span>
+                        <span class="kpi-sub">64% от бюджета</span>
+                    </div>
+                    <div class="circular-chart"></div>
                 </div>
-                <div class="kpi-value text-green">+18 750 ₽</div>
+            </div>
+            
+            <div class="card">
+                <div class="kpi-card-content">
+                    <div class="kpi-info">
+                        <span class="kpi-title">Осталось</span>
+                        <span class="kpi-value">72 550 ₽</span>
+                        <span class="kpi-sub">на 18 дней</span>
+                    </div>
+                    <div class="kpi-icon-wrapper bg-green-light">
+                        <i class="ph-fill ph-wallet"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="kpi-card-content">
+                    <div class="kpi-info">
+                        <span class="kpi-title">Доступно в день</span>
+                        <span class="kpi-value">4 030 ₽</span>
+                        <span class="kpi-sub">до конца месяца</span>
+                    </div>
+                    <div class="kpi-icon-wrapper" style="background: #fffbeb; color: var(--yellow-primary);">
+                        <i class="ph-fill ph-calendar-blank"></i>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="dashboard-grid">
             
             <div class="card">
-                <h2 class="section-title">Бюджеты на май</h2>
+                <div class="section-title">
+                    Бюджеты на май
+                </div>
                 
                 <div class="budget-list">
+                    <div class="budget-header-row">
+                        <div>Категория</div>
+                        <div>Прогресс</div>
+                        <div class="text-right">Потрачено</div>
+                        <div class="text-right">Осталось</div>
+                    </div>
+
                     <div class="budget-item">
                         <span class="budget-name">Продукты</span>
-                        <div class="progress-bg"><div class="progress-fill" style="width: 70%; background: var(--green-primary);"></div></div>
-                        <span class="budget-amount">16 840 ₽</span>
+                        <div class="progress-wrapper">
+                            <div class="progress-bg"><div class="progress-fill" style="width: 69%; background: var(--green-primary);"></div></div>
+                            <span class="progress-percent">69%</span>
+                        </div>
+                        <span class="budget-amount">24 180 ₽</span>
+                        <span class="budget-remaining">10 820 ₽</span>
                     </div>
 
                     <div class="budget-item">
                         <span class="budget-name">Жилье</span>
-                        <div class="progress-bg"><div class="progress-fill" style="width: 100%; background: var(--purple-primary);"></div></div>
-                        <span class="budget-amount">32 200 ₽</span>
+                        <div class="progress-wrapper">
+                            <div class="progress-bg"><div class="progress-fill" style="width: 100%; background: var(--blue-primary);"></div></div>
+                            <span class="progress-percent">100%</span>
+                        </div>
+                        <span class="budget-amount">45 000 ₽</span>
+                        <span class="budget-remaining">0 ₽</span>
                     </div>
 
                     <div class="budget-item">
                         <span class="budget-name">Транспорт</span>
-                        <div class="progress-bg"><div class="progress-fill" style="width: 45%; background: var(--blue-primary);"></div></div>
-                        <span class="budget-amount">8 500 ₽</span>
+                        <div class="progress-wrapper">
+                            <div class="progress-bg"><div class="progress-fill" style="width: 65%; background: var(--purple-primary);"></div></div>
+                            <span class="progress-percent">65%</span>
+                        </div>
+                        <span class="budget-amount">9 750 ₽</span>
+                        <span class="budget-remaining">5 250 ₽</span>
                     </div>
 
                     <div class="budget-item">
                         <span class="budget-name">Развлечения</span>
-                        <div class="progress-bg"><div class="progress-fill" style="width: 85%; background: var(--red-primary);"></div></div>
-                        <span class="budget-amount">12 400 ₽</span>
+                        <div class="progress-wrapper">
+                            <div class="progress-bg"><div class="progress-fill" style="width: 80%; background: var(--red-primary);"></div></div>
+                            <span class="progress-percent">80%</span>
+                        </div>
+                        <span class="budget-amount">9 640 ₽</span>
+                        <span class="budget-remaining">2 360 ₽</span>
                     </div>
                     
                     <div class="budget-item">
                         <span class="budget-name">Здоровье</span>
-                        <div class="progress-bg"><div class="progress-fill" style="width: 20%; background: var(--green-primary);"></div></div>
-                        <span class="budget-amount">3 000 ₽</span>
+                        <div class="progress-wrapper">
+                            <div class="progress-bg"><div class="progress-fill" style="width: 40%; background: var(--green-primary);"></div></div>
+                            <span class="progress-percent">40%</span>
+                        </div>
+                        <span class="budget-amount">3 210 ₽</span>
+                        <span class="budget-remaining">4 790 ₽</span>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <h2 class="section-title">Предстоящие платежи</h2>
-                <div class="payment-list">
-                    <div class="payment-item">
-                        <span class="payment-name">Аренда квартиры</span>
-                        <span class="payment-amount">-35 000 ₽</span>
-                    </div>
-                    <div class="payment-item">
-                        <span class="payment-name">Страховка авто</span>
-                        <span class="payment-amount">-9 500 ₽</span>
-                    </div>
-                    <div class="payment-item">
-                        <span class="payment-name">Интернет</span>
-                        <span class="payment-amount">-1 200 ₽</span>
-                    </div>
-                    <div class="payment-item">
-                        <span class="payment-name">Подписка Spotify</span>
-                        <span class="payment-amount">-299 ₽</span>
-                    </div>
-                    <div class="payment-item">
-                        <span class="payment-name">Кредит</span>
-                        <span class="payment-amount">-15 000 ₽</span>
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <div class="card">
+                    <h2 class="section-title">Распределение бюджета</h2>
+                    <div class="chart-container">
+                        <div class="large-circular-chart"></div>
                     </div>
                 </div>
+
+                <div class="card">
+                    <h2 class="section-title">Предстоящие платежи</h2>
+                    <div class="payment-list">
+                        <div class="payment-item">
+                            <span class="payment-name">Аренда квартиры</span>
+                            <span class="payment-amount">25 000 ₽</span>
+                        </div>
+                        <div class="payment-item">
+                            <span class="payment-name">Страховка авто</span>
+                            <span class="payment-amount">9 500 ₽</span>
+                        </div>
+                        <div class="payment-item">
+                            <span class="payment-name">Абонемент в зал</span>
+                            <span class="payment-amount">2 500 ₽</span>
+                        </div>
+                        <div class="payment-item">
+                            <span class="payment-name">Интернет и связь</span>
+                            <span class="payment-amount">1 200 ₽</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
