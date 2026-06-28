@@ -14,7 +14,6 @@
             --text-dark: #111827;
             --text-gray: #6b7280;
             --green-primary: #10b981;
-            --green-light: #d1fae5;
             --purple-primary: #8b5cf6;
             --purple-light: #ede9fe;
             --red-primary: #ef4444;
@@ -154,6 +153,9 @@
             padding: 20px;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .kpi-header {
@@ -179,8 +181,8 @@
             font-weight: 700;
         }
 
-        /* Специфичная карточка для "Потрачено" (Круговая диаграмма) */
-        .spent-card {
+        /* Карточка "Потрачено" с круговой диаграммой */
+        .spent-card-content {
             display: flex;
             align-items: center;
             gap: 16px;
@@ -190,7 +192,7 @@
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            /* 64% заполнено пурпурным, остальное серое */
+            /* 64% заполнено пурпурным */
             background: conic-gradient(var(--purple-primary) 64%, var(--bg-main) 0);
             position: relative;
             display: flex;
@@ -227,7 +229,7 @@
             margin-bottom: 16px;
         }
 
-        /* Строки бюджета */
+        /* Строки бюджета (без иконок) */
         .budget-list {
             display: flex;
             flex-direction: column;
@@ -272,7 +274,7 @@
             text-align: right;
         }
 
-        /* Строки платежей */
+        /* Строки платежей (без иконок и дат) */
         .payment-list {
             display: flex;
             flex-direction: column;
@@ -294,13 +296,13 @@
 
         .payment-name {
             color: var(--text-dark);
+            font-weight: 500;
         }
 
         .payment-amount {
             font-weight: 600;
         }
 
-        .text-red { color: var(--text-dark); } 
         .text-green { color: var(--green-primary); }
     </style>
 </head>
@@ -317,6 +319,7 @@
             <a href="budget.html" class="nav-item active"><i class="ph ph-wallet"></i> Бюджет</a>
             <a href="accounts.html" class="nav-item"><i class="ph ph-credit-card"></i> Счета</a>
             <a href="investments.html" class="nav-item"><i class="ph ph-trend-up"></i> Инвестиции</a>
+            <a href="debts.html" class="nav-item"><i class="ph ph-hand-coins"></i> Долги</a>
             <a href="goals.html" class="nav-item"><i class="ph ph-target"></i> Цели</a>
             <a href="analytics.html" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
             <a href="settings.html" class="nav-item"><i class="ph ph-gear"></i> Настройки</a>
@@ -341,6 +344,7 @@
                 </div>
                 <div class="kpi-value">6</div>
             </div>
+            
             <div class="card">
                 <div class="kpi-header">
                     <span class="kpi-title">План на месяц</span>
@@ -348,13 +352,17 @@
                 </div>
                 <div class="kpi-value">152 000 ₽</div>
             </div>
-            <div class="card spent-card" style="padding: 16px 20px;">
-                <div class="circular-chart"></div>
-                <div>
-                    <div class="kpi-title" style="margin-bottom: 4px;">Потрачено</div>
-                    <div class="kpi-value" style="font-size: 20px;">98 430 ₽</div>
+            
+            <div class="card" style="justify-content: center;">
+                <div class="spent-card-content">
+                    <div class="circular-chart"></div>
+                    <div>
+                        <div class="kpi-title" style="margin-bottom: 4px;">Потрачено</div>
+                        <div class="kpi-value" style="font-size: 20px;">98 430 ₽</div>
+                    </div>
                 </div>
             </div>
+            
             <div class="card">
                 <div class="kpi-header">
                     <span class="kpi-title">Экономия за май</span>
