@@ -1,58 +1,1123 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>В разработке — Финансы</title>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    :root {
-      --bg-main: #f8fafc; --surface: #ffffff; --text-dark: #0f172a; --text-gray: #64748b;
-      --green-primary: #10b981; --green-light: #d1fae5; --border: #e2e8f0; --radius-lg: 24px;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-    body { background-color: var(--bg-main); color: var(--text-dark); display: flex; min-height: 100vh; }
-    
-    /* САЙДБАР (Такой же как везде) */
-    .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); padding: 30px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; z-index: 10; }
-    .logo { display: flex; align-items: center; gap: 12px; font-size: 1.1rem; font-weight: 700; margin-bottom: 40px; color: var(--text-dark); }
-    .logo i { font-size: 28px; color: var(--green-primary); }
-    .nav { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; color: var(--text-gray); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.2s; }
-    .nav-item i { font-size: 22px; }
-    .nav-item:hover { background: #f1f5f9; color: var(--text-dark); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinFlow - Долги</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    /* КОНТЕНТ ЗАГЛУШКИ */
-    .main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; }
-    .main i { font-size: 64px; color: var(--text-gray); opacity: 0.5; }
-    .main h1 { font-size: 2rem; font-weight: 700; }
-    .main p { color: var(--text-gray); font-size: 1.1rem; max-width: 400px; line-height: 1.5; }
-  </style>
+        :root {
+            --bg-main: #f8fafc;
+            --surface: #ffffff;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+            --text-light: #94a3b8;
+            --purple-primary: #7c3aed;
+            --purple-light: #f3e8ff;
+            --green-primary: #10b981;
+            --green-light: #d1fae5;
+            --blue-primary: #3b82f6;
+            --yellow-primary: #f59e0b;
+            --red-primary: #ef4444;
+            --red-light: #fee2e2;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Сайдбар --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--surface);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 24px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 32px;
+        }
+
+        .logo i {
+            color: var(--purple-primary);
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0 16px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+        }
+
+        .nav-item.active {
+            background-color: var(--purple-light);
+            color: var(--purple-primary);
+            font-weight: 600;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .sidebar-bottom {
+            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .monthly-report {
+            background-color: var(--purple-light);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .monthly-report-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--purple-primary);
+        }
+
+        .monthly-report-sub {
+            font-size: 11px;
+            color: var(--text-gray);
+            margin-top: 2px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 8px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-image: url('https://i.pravatar.cc/100?img=11');
+            background-size: cover;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-name { font-size: 14px; font-weight: 600; }
+        .user-role { font-size: 12px; color: var(--text-gray); }
+
+        /* --- Основной контент --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 32px 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Шапка */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .page-title p {
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-outline {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            color: var(--purple-primary);
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background-color: var(--purple-primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .icon-btn {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-gray);
+            cursor: pointer;
+            font-size: 20px;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--red-primary);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--surface);
+        }
+
+        /* --- KPI Сетка --- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 110px;
+            position: relative;
+        }
+
+        .kpi-card-header {
+            color: var(--text-gray);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .kpi-icon-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: var(--purple-light);
+            color: var(--purple-primary);
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
+
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .kpi-sub {
+            font-size: 11px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .text-green { color: var(--green-primary); }
+        .text-red { color: var(--red-primary); }
+
+        .sparkline-kpi {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+        }
+
+        /* --- Вкладки --- */
+        .tabs {
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-top: 8px;
+        }
+
+        .tab {
+            padding: 0 0 12px 0;
+            color: var(--text-gray);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .tab.active {
+            color: var(--purple-primary);
+            font-weight: 600;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--purple-primary);
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* --- Основная сетка --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Таблица долгов */
+        .debt-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--text-gray);
+            cursor: pointer;
+        }
+
+        .debt-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .debt-item {
+            display: grid;
+            grid-template-columns: 200px 1fr 1fr 1.2fr 1.5fr 30px;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        .debt-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .debt-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .icon-purple { background: var(--purple-light); color: var(--purple-primary); }
+        .icon-green { background: var(--green-light); color: var(--green-primary); }
+        .icon-red { background: var(--red-light); color: var(--red-primary); }
+        .icon-yellow { background: #fef3c7; color: var(--yellow-primary); }
+
+        .debt-name { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
+        .debt-bank { font-size: 12px; color: var(--text-gray); }
+
+        .stat-col {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label { font-size: 11px; color: var(--text-gray); }
+        .stat-value { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+        .stat-date { font-size: 11px; color: var(--text-light); }
+
+        .progress-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .progress-bg {
+            height: 6px;
+            background: var(--bg-main);
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .btn-add-debt {
+            width: 100%;
+            padding: 14px;
+            background: var(--purple-light);
+            color: var(--purple-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        /* 2 колонки под списком долгов */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* Календарь платежей */
+        .calendar-dates {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .cal-day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+        
+        .cal-day.active .cal-date {
+            background: var(--purple-primary);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .cal-date {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .upcoming-payment {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--bg-main);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+        }
+
+        .payment-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-pay {
+            padding: 6px 12px;
+            border: 1px solid var(--purple-primary);
+            color: var(--purple-primary);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .btn-text {
+            width: 100%;
+            text-align: center;
+            color: var(--purple-primary);
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+
+        /* Влияние долгов */
+        .impact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .impact-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        .impact-item.total {
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-color);
+            background: var(--green-light);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            color: var(--green-primary);
+        }
+
+        /* --- Правая колонка --- */
+        
+        /* Структура долгов */
+        .large-circular-chart {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--purple-primary) 0% 68%, 
+                var(--green-primary) 68% 88%, 
+                var(--red-primary) 88% 96%, 
+                var(--yellow-primary) 96% 100%
+            );
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .large-circular-chart::after {
+            content: "1 250 000 ₽\A Всего";
+            white-space: pre-wrap;
+            text-align: center;
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: var(--surface);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .legend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        
+        .legend-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* План досрочного погашения Баннер */
+        .promo-banner {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .promo-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .promo-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--green-primary);
+            margin-bottom: 4px;
+        }
+
+        .promo-sub {
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-bottom: 16px;
+        }
+
+        /* Подсказки */
+        .tip-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tip-item:last-child { border-bottom: none; padding-bottom: 0; }
+        
+        .tip-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #fff7ed;
+            color: var(--yellow-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .tip-icon.green { background: var(--green-light); color: var(--green-primary); }
+
+        .tip-title { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
+        .tip-desc { font-size: 12px; color: var(--text-gray); }
+
+    </style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <div class="logo"><i class="ph-fill ph-plant"></i> Финансы. Путь к свободе</div>
-    <nav class="nav">
-      <a href="index.html" class="nav-item"><i class="ph ph-house"></i> Главная</a>
-      <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
-      <a href="budget.html" class="nav-item"><i class="ph ph-chart-pie"></i> Бюджет</a>
-      <a href="accounts.html" class="nav-item"><i class="ph ph-wallet"></i> Счета</a>
-      <a href="investments.html" class="nav-item"><i class="ph ph-trend-up"></i> Инвестиции</a>
-      <a href="goals.html" class="nav-item"><i class="ph ph-target"></i> Цели</a>
-      <a href="analytics.html" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
-      <a href="reports.html" class="nav-item"><i class="ph ph-file-text"></i> Отчеты</a>
-      <a href="debts.html" class="nav-item"><i class="ph ph-hand-coins"></i> Долги</a>
-      <a href="settings.html" class="nav-item"><i class="ph ph-gear"></i> Настройки</a>
-    </nav>
-  </aside>
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="ph-fill ph-intersect"></i>
+            FinFlow
+        </div>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-item"><i class="ph ph-house"></i> Главная</a>
+            <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
+            <a href="budget.html" class="nav-item"><i class="ph ph-wallet"></i> Бюджет</a>
+            <a href="accounts.html" class="nav-item"><i class="ph ph-credit-card"></i> Счета</a>
+            <a href="investments.html" class="nav-item"><i class="ph ph-trend-up"></i> Инвестиции</a>
+            <a href="debts.html" class="nav-item active"><i class="ph ph-hand-coins"></i> Долги</a>
+            <a href="goals.html" class="nav-item"><i class="ph ph-target"></i> Цели</a>
+            <a href="analytics.html" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
+            <a href="settings.html" class="nav-item"><i class="ph ph-gear"></i> Настройки</a>
+        </nav>
+        
+        <div class="sidebar-bottom">
+            <div class="monthly-report">
+                <div>
+                    <div class="monthly-report-text">Ежемесячный отчёт</div>
+                    <div class="monthly-report-sub">Май 2026</div>
+                </div>
+                <i class="ph-fill ph-file-pdf"></i>
+            </div>
+            
+            <div class="user-profile">
+                <div class="user-avatar"></div>
+                <div class="user-info">
+                    <div class="user-name">Андрей Иванов</div>
+                    <div class="user-role">Профиль</div>
+                </div>
+                <i class="ph ph-caret-down" style="color: var(--text-gray);"></i>
+            </div>
+        </div>
+    </aside>
 
-  <main class="main">
-    <i class="ph-fill ph-cone"></i>
-    <h1>Страница в разработке</h1>
-    <p>Скоро здесь появится крутой функционал. А пока можешь вернуться в уже готовые разделы.</p>
-  </main>
+    <main class="main-content">
+        
+        <header class="header">
+            <div class="page-title">
+                <h1>Долги</h1>
+                <p>Контролируйте задолженности и становитесь свободнее</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn-outline">
+                    <i class="ph ph-plus"></i> Новый долг
+                </button>
+                <button class="btn-primary">
+                    <i class="ph ph-file-text"></i> План погашения
+                </button>
+                
+                <div style="display: flex; gap: 12px; margin-left: 8px;">
+                    <div class="icon-btn"><i class="ph ph-magnifying-glass"></i></div>
+                    <div class="icon-btn">
+                        <i class="ph ph-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-card-header">
+                    Общая задолженность
+                </div>
+                <div>
+                    <div class="kpi-value">1 250 000 ₽</div>
+                    <div class="kpi-sub"><span class="text-green">-120 000 ₽ (-8,7%)</span> к апрелю</div>
+                </div>
+                <div class="kpi-icon-sm"><i class="ph-fill ph-wallet"></i></div>
+                <svg class="sparkline-kpi" width="60" height="24" viewBox="0 0 60 24">
+                    <path d="M2,20 L15,10 L30,15 L45,5 L58,12" fill="none" stroke="var(--purple-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-card-header">Ежемесячный платёж</div>
+                <div>
+                    <div class="kpi-value">45 300 ₽</div>
+                    <div class="kpi-sub">13,8% от дохода</div>
+                </div>
+                <div class="kpi-icon-sm" style="background: #ecfdf5; color: var(--green-primary);"><i class="ph-fill ph-money"></i></div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-card-header">Следующий платёж</div>
+                <div>
+                    <div class="kpi-value">15 300 ₽</div>
+                    <div class="kpi-sub">через 8 дней</div>
+                </div>
+                <div class="kpi-icon-sm" style="background: #fff7ed; color: var(--yellow-primary);"><i class="ph-fill ph-calendar-blank"></i></div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-card-header">Скорость погашения</div>
+                <div>
+                    <div class="kpi-value">+28 600 ₽</div>
+                    <div class="kpi-sub">выше плана на 15%</div>
+                </div>
+                <svg class="sparkline-kpi" width="60" height="24" viewBox="0 0 60 24">
+                    <path d="M2,20 L15,14 L30,16 L45,6 L58,2" fill="none" stroke="var(--green-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-card-header">Свобода от долгов</div>
+                <div>
+                    <div class="kpi-value">март 2028</div>
+                    <div class="kpi-sub">на 1 месяц раньше</div>
+                </div>
+                <div class="kpi-icon-sm" style="background: var(--purple-light); color: var(--purple-primary);"><i class="ph-fill ph-boat"></i></div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <a href="#" class="tab active">Все долги</a>
+            <a href="#" class="tab">Кредиты</a>
+            <a href="#" class="tab">Займы</a>
+            <a href="#" class="tab">Кредитные карты</a>
+            <a href="#" class="tab">История платежей</a>
+            <a href="#" class="tab">План досрочного погашения</a>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <div class="card">
+                    <div class="section-title" style="margin-bottom: 0;">Активные долги</div>
+                    
+                    <div class="debt-controls">
+                        <div class="filter-btn"><i class="ph ph-funnel"></i> Фильтры</div>
+                        <div class="filter-btn"><i class="ph ph-list-dashes"></i></div>
+                        <div class="filter-btn" style="background: var(--bg-main);"><i class="ph ph-squares-four"></i></div>
+                    </div>
+
+                    <div class="debt-list">
+                        <div class="debt-item">
+                            <div class="debt-info">
+                                <div class="debt-icon icon-purple"><i class="ph-fill ph-bank"></i></div>
+                                <div>
+                                    <div class="debt-name">Ипотека – Квартира</div>
+                                    <div class="debt-bank">Беларусбанк</div>
+                                </div>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Осталось</span>
+                                <span class="stat-value">850 000 ₽</span>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Ставка</span>
+                                <span class="stat-value">8,5%</span>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Следующий платёж</span>
+                                <span class="stat-value">25 000 ₽</span>
+                                <span class="stat-date">15 июн. 2026</span>
+                            </div>
+                            <div class="progress-wrapper">
+                                <div class="progress-header">
+                                    <span>Прогресс погашения</span>
+                                    <span>40%</span>
+                                </div>
+                                <div class="progress-bg"><div class="progress-fill" style="width: 40%; background: var(--purple-primary);"></div></div>
+                            </div>
+                            <div style="color: var(--text-gray); cursor: pointer; text-align: right;"><i class="ph ph-dots-three-vertical" style="font-size: 20px;"></i></div>
+                        </div>
+
+                        <div class="debt-item">
+                            <div class="debt-info">
+                                <div class="debt-icon icon-green"><i class="ph-fill ph-money"></i></div>
+                                <div>
+                                    <div class="debt-name">Кредит наличными</div>
+                                    <div class="debt-bank">Альфа-Банк</div>
+                                </div>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Осталось</span>
+                                <span class="stat-value">250 000 ₽</span>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Ставка</span>
+                                <span class="stat-value">14,9%</span>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Следующий платёж</span>
+                                <span class="stat-value">12 700 ₽</span>
+                                <span class="stat-date">10 июн. 2026</span>
+                            </div>
+                            <div class="progress-wrapper">
+                                <div class="progress-header">
+                                    <span>Прогресс погашения</span>
+                                    <span>60%</span>
+                                </div>
+                                <div class="progress-bg"><div class="progress-fill" style="width: 60%; background: var(--green-primary);"></div></div>
+                            </div>
+                            <div style="color: var(--text-gray); cursor: pointer; text-align: right;"><i class="ph ph-dots-three-vertical" style="font-size: 20px;"></i></div>
+                        </div>
+
+                        <div class="debt-item">
+                            <div class="debt-info">
+                                <div class="debt-icon icon-red"><i class="ph-fill ph-credit-card"></i></div>
+                                <div>
+                                    <div class="debt-name">Кредитная карта •••• 7890</div>
+                                    <div class="debt-bank">Т-Банк</div>
+                                </div>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Осталось</span>
+                                <span class="stat-value">95 000 ₽</span>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Ставка</span>
+                                <span class="stat-value">23,9%</span>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Минимальный платёж</span>
+                                <span class="stat-value">7 600 ₽</span>
+                                <span class="stat-date">5 июн. 2026</span>
+                            </div>
+                            <div class="progress-wrapper">
+                                <div class="progress-header">
+                                    <span>Прогресс погашения</span>
+                                    <span>20%</span>
+                                </div>
+                                <div class="progress-bg"><div class="progress-fill" style="width: 20%; background: var(--red-primary);"></div></div>
+                            </div>
+                            <div style="color: var(--text-gray); cursor: pointer; text-align: right;"><i class="ph ph-dots-three-vertical" style="font-size: 20px;"></i></div>
+                        </div>
+
+                        <div class="debt-item">
+                            <div class="debt-info">
+                                <div class="debt-icon icon-yellow"><i class="ph-fill ph-user"></i></div>
+                                <div>
+                                    <div class="debt-name">Займ у друга</div>
+                                    <div class="debt-bank">Иван Петров</div>
+                                </div>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Осталось</span>
+                                <span class="stat-value">30 000 ₽</span>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Без</span>
+                                <span class="stat-value" style="font-weight: 400; font-size: 13px;">процентов</span>
+                            </div>
+                            <div class="stat-col">
+                                <span class="stat-label">Следующий платёж</span>
+                                <span class="stat-value">5 000 ₽</span>
+                                <span class="stat-date">01 июл. 2026</span>
+                            </div>
+                            <div class="progress-wrapper">
+                                <div class="progress-header">
+                                    <span>Прогресс погашения</span>
+                                    <span>75%</span>
+                                </div>
+                                <div class="progress-bg"><div class="progress-fill" style="width: 75%; background: var(--yellow-primary);"></div></div>
+                            </div>
+                            <div style="color: var(--text-gray); cursor: pointer; text-align: right;"><i class="ph ph-dots-three-vertical" style="font-size: 20px;"></i></div>
+                        </div>
+
+                        <button class="btn-add-debt"><i class="ph ph-plus"></i> Добавить долг</button>
+                    </div>
+                </div>
+
+                <div class="bottom-grid">
+                    
+                    <div class="card">
+                        <div class="section-title">
+                            Календарь платежей
+                            <span style="font-size: 13px; color: var(--text-gray); font-weight: 500;">Июнь 2026</span>
+                        </div>
+                        
+                        <div class="calendar-dates">
+                            <div class="cal-day"><span>Пн</span><div class="cal-date">9</div></div>
+                            <div class="cal-day"><span>Вт</span><div class="cal-date">10</div></div>
+                            <div class="cal-day"><span>Ср</span><div class="cal-date">11</div></div>
+                            <div class="cal-day"><span>Чт</span><div class="cal-date">12</div></div>
+                            <div class="cal-day"><span>Пт</span><div class="cal-date">13</div></div>
+                            <div class="cal-day"><span>Сб</span><div class="cal-date">14</div></div>
+                            <div class="cal-day active"><span>Вс</span><div class="cal-date">15</div></div>
+                            <div class="cal-day"><span>Пн</span><div class="cal-date">16</div></div>
+                            <div class="cal-day"><span>Вт</span><div class="cal-date">17</div></div>
+                            <div class="cal-day"><span>Ср</span><div class="cal-date">18</div></div>
+                        </div>
+
+                        <div class="upcoming-payment">
+                            <div class="payment-info">
+                                <div class="debt-icon icon-purple" style="width: 32px; height: 32px; font-size: 16px;"><i class="ph-fill ph-bank"></i></div>
+                                <div>
+                                    <div class="debt-name" style="font-size: 13px;">Ипотека – Квартира</div>
+                                    <div class="debt-bank">Беларусбанк</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right; display: flex; align-items: center; gap: 16px;">
+                                <div>
+                                    <div style="font-size: 10px; color: var(--green-primary); font-weight: 600; margin-bottom: 2px;">Запланирован</div>
+                                    <div class="stat-value">25 000 ₽</div>
+                                    <div class="stat-date">15 июн. 2026</div>
+                                </div>
+                                <button class="btn-pay">Оплатить</button>
+                            </div>
+                        </div>
+
+                        <div class="btn-text">Смотреть все платежи</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="section-title">Влияние долгов на финансы</div>
+                        <div class="impact-list">
+                            <div class="impact-item">
+                                <span style="display: flex; align-items: center; gap: 8px;"><i class="ph-fill ph-wallet" style="color: var(--blue-primary);"></i> Ваш доход</span>
+                                <strong>325 000 ₽</strong>
+                            </div>
+                            <div class="impact-item">
+                                <span style="display: flex; align-items: center; gap: 8px;"><i class="ph-fill ph-lock-key" style="color: var(--red-primary);"></i> Расходы</span>
+                                <strong>214 700 ₽</strong>
+                            </div>
+                            <div class="impact-item">
+                                <span style="display: flex; align-items: center; gap: 8px;"><i class="ph-fill ph-hand-coins" style="color: var(--yellow-primary);"></i> Платежи по долгам</span>
+                                <strong>45 300 ₽</strong>
+                            </div>
+                            <div class="impact-item total">
+                                <span>Свободно</span>
+                                <span>65 000 ₽</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <div class="card">
+                    <h2 class="section-title">Структура долгов</h2>
+                    <div class="large-circular-chart"></div>
+                    
+                    <div class="legend-list">
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background: var(--purple-primary);"></div> Ипотека<br><span style="font-size: 11px; color: var(--text-gray); margin-left: 16px;">850 000 ₽</span></div>
+                            <strong>68%</strong>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background: var(--green-primary);"></div> Потребительский кредит<br><span style="font-size: 11px; color: var(--text-gray); margin-left: 16px;">250 000 ₽</span></div>
+                            <strong>20%</strong>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background: var(--red-primary);"></div> Кредитные карты<br><span style="font-size: 11px; color: var(--text-gray); margin-left: 16px;">95 000 ₽</span></div>
+                            <strong>8%</strong>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background: var(--yellow-primary);"></div> Займы<br><span style="font-size: 11px; color: var(--text-gray); margin-left: 16px;">30 000 ₽</span></div>
+                            <strong>4%</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="promo-banner">
+                    <div class="promo-title">План досрочного погашения</div>
+                    <div style="font-size: 12px; color: var(--text-gray); margin-bottom: 8px;">Вы можете сэкономить</div>
+                    <div class="promo-value">132 400 ₽</div>
+                    <div class="promo-sub">и закрыть долги на 1 месяц раньше</div>
+                    <button class="btn-outline" style="background: white; width: 100%; justify-content: center;">Смотреть план</button>
+                </div>
+
+                <div class="card">
+                    <h2 class="section-title">Подсказки</h2>
+                    
+                    <div class="tip-item">
+                        <div class="tip-icon"><i class="ph-fill ph-credit-card"></i></div>
+                        <div>
+                            <div class="tip-title">Погасите кредитную карту</div>
+                            <div class="tip-desc">Высокая ставка 23,9%<br>Экономия: <span style="color: var(--green-primary); font-weight: 500;">18 400 ₽</span></div>
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon green"><i class="ph-fill ph-money"></i></div>
+                        <div>
+                            <div class="tip-title">Увеличьте платёж по кредиту</div>
+                            <div class="tip-desc">На 3 000 ₽ в месяц<br>Срок сократится на 2 мес.</div>
+                        </div>
+                    </div>
+
+                    <div class="tip-item">
+                        <div class="tip-icon green"><i class="ph-fill ph-arrows-clockwise"></i></div>
+                        <div>
+                            <div class="tip-title">Рефинансируйте ипотеку</div>
+                            <div class="tip-desc">Ваша ставка выше средней<br>Выгода до <span style="color: var(--green-primary); font-weight: 500;">45 000 ₽</span></div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
 
 </body>
 </html>
