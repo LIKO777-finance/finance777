@@ -1,450 +1,403 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Счета | FinFlow</title>
-  
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinFlow - Счета</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --bg-main: #f8fafc;
+            --surface: #ffffff;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+            --purple-primary: #7c3aed;
+            --purple-light: #f3e8ff;
+            --green-primary: #10b981;
+            --red-primary: #ef4444;
+            --border-color: #e2e8f0;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
 
-    :root {
-      --bg-main: #f4f6f9;
-      --surface: #ffffff;
-      --text-dark: #111827;
-      --text-gray: #6b7280;
-      --text-light: #9ca3af;
-      --green-primary: #10b981;
-      --green-light: #d1fae5;
-      --red-primary: #ef4444;
-      --border: #f3f4f6;
-      --radius-lg: 24px;
-      --radius-md: 16px;
-      --radius-sm: 12px;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-dark); display: flex; height: 100vh; overflow: hidden; }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-    body { background-color: var(--bg-main); color: var(--text-dark); display: flex; height: 100vh; overflow: hidden; }
+        /* Сайдбар */
+        .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 24px 0; flex-shrink: 0; }
+        .nav-menu { padding: 0 16px; flex-grow: 1; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); color: var(--text-gray); text-decoration: none; font-weight: 500; }
+        .nav-item.active { background-color: var(--purple-light); color: var(--purple-primary); }
+        
+        /* Контент */
+        .main-content { flex-grow: 1; padding: 32px 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+        
+        /* Переключатель валюты RUB / BYN */
+        .currency-switch { background: #e2e8f0; padding: 4px; border-radius: var(--radius-md); display: flex; gap: 4px; align-items: center; }
+        .currency-btn { border: none; background: transparent; padding: 6px 14px; font-weight: 600; font-size: 13px; border-radius: 8px; cursor: pointer; color: var(--text-gray); transition: 0.2s; }
+        .currency-btn.active { background: var(--surface); color: var(--text-dark); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-    /* Сайдбар FinFlow */
-    .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); padding: 30px 20px; display: flex; flex-direction: column; flex-shrink: 0; }
-    .logo { display: flex; align-items: center; gap: 12px; font-size: 1.2rem; font-weight: 800; color: var(--text-dark); margin-bottom: 30px; }
-    .logo i { color: var(--green-primary); font-size: 24px; }
-    .nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-    .nav-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: var(--radius-md); color: var(--text-gray); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: all 0.2s ease; }
-    .nav-item i { font-size: 22px; }
-    .nav-item:hover:not(.active) { background: #f9fafb; color: var(--text-dark); }
-    .nav-item.active { background: var(--green-light); color: var(--green-primary); font-weight: 600; }
-    
-    /* Контент */
-    .content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 32px; }
-    
-    /* Шапка */
-    .header-panel { display: flex; justify-content: space-between; align-items: center; }
-    .header-title h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 4px; }
-    .header-title p { color: var(--text-gray); font-size: 0.95rem; }
-    
-    /* Переключатель валюты RUB / BYN */
-    .currency-switch { background: #e2e8f0; padding: 4px; border-radius: 12px; display: flex; gap: 4px; }
-    .currency-btn { border: none; background: transparent; padding: 8px 16px; font-weight: 600; border-radius: 8px; cursor: pointer; color: var(--text-gray); transition: 0.2s; }
-    .currency-btn.active { background: var(--surface); color: var(--text-dark); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        /* KPI Карточки */
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .kpi-card { background: var(--surface); padding: 20px; border-radius: var(--radius-lg); border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .kpi-title { font-size: 13px; color: var(--text-gray); margin-bottom: 8px; }
+        .kpi-value { font-size: 20px; font-weight: 700; }
+        .kpi-trend { font-size: 12px; color: var(--green-primary); margin-top: 4px; }
 
-    /* KPI Сетка */
-    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .kpi-card { background: var(--surface); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border); }
-    .kpi-title { font-size: 0.85rem; color: var(--text-gray); margin-bottom: 8px; font-weight: 500; }
-    .kpi-value { font-size: 1.4rem; font-weight: 700; }
-    .kpi-trend { font-size: 0.8rem; color: var(--green-primary); margin-top: 6px; font-weight: 500; }
+        /* Основная сетка */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        .card { background: var(--surface); border-radius: var(--radius-lg); padding: 24px; border: 1px solid rgba(0,0,0,0.03); }
+        
+        /* Группы счетов */
+        .section-header { font-size: 16px; font-weight: 600; margin-bottom: 16px; margin-top: 24px; color: var(--text-dark); }
+        .section-header:first-of-type { margin-top: 0; }
+        
+        .account-list { display: flex; flex-direction: column; }
+        .account-item { display: grid; grid-template-columns: 220px 140px 140px 1fr 40px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-color); }
+        .account-item:last-child { border-bottom: none; }
+        .account-name { font-weight: 600; font-size: 14px; }
+        .account-bank { font-size: 12px; color: var(--text-gray); }
+        
+        .lbl-gray { font-size: 11px; color: var(--text-gray); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .val-bold { font-weight: 600; font-size: 13px; }
 
-    /* Главный Dashboard макет */
-    .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 32px; }
-    .card { background: var(--surface); border-radius: var(--radius-lg); padding: 28px; border: 1px solid var(--border); }
-    
-    .section-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; margin-top: 24px; color: var(--text-dark); }
-    .section-header:first-of-type { margin-top: 0; }
-    
-    /* Строки списков счетов */
-    .account-list { display: flex; flex-direction: column; }
-    .account-item { display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 0.5fr 40px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border); }
-    .account-item:last-child { border-bottom: none; }
-    .account-name { font-weight: 600; font-size: 1rem; color: var(--text-dark); }
-    .account-bank { font-size: 0.85rem; color: var(--text-gray); margin-top: 2px; }
-    
-    .lbl-gray { font-size: 0.75rem; color: var(--text-gray); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .val-bold { font-weight: 600; font-size: 0.95rem; }
+        /* Индикатор прогресса */
+        .progress-container { display: flex; flex-direction: column; gap: 4px; width: 100px; }
+        .progress-bar-mini { background: var(--bg-main); height: 6px; width: 100%; border-radius: 4px; overflow: hidden; }
+        .progress-fill { background: var(--green-primary); height: 100%; }
 
-    /* Индикатор прогресса накоплений */
-    .progress-bar-mini { background: #f3f4f6; height: 6px; width: 100%; border-radius: 99px; overflow: hidden; margin-top: 4px; }
-    .progress-fill { background: var(--green-primary); height: 100%; border-radius: 99px; }
+        /* Виджеты справа */
+        .widget-card { background: var(--surface); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.03); }
+        .donut-chart { width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(var(--purple-primary) 0% 55%, var(--green-primary) 55% 94%, var(--red-primary) 94% 100%); margin: 0 auto; }
+        .promo-box { background: var(--purple-light); padding: 20px; border-radius: var(--radius-lg); text-align: center; }
+        
+        /* Кнопки и иконки */
+        .btn-icon { background: transparent; border: none; color: var(--text-gray); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+        .btn-icon:hover { color: var(--text-dark); }
 
-    /* Правые боковые виджеты */
-    .widget-card { background: var(--surface); border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; }
-    .widget-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
-    .donut-chart { width: 160px; height: 160px; border-radius: 50%; background: conic-gradient(var(--green-primary) 0% 65%, #3b82f6 65% 90%, var(--red-primary) 90% 100%); margin: 20px auto; }
-    
-    .promo-box { background: var(--green-light); padding: 24px; border-radius: var(--radius-lg); text-align: center; color: var(--text-dark); }
-    
-    /* Кнопки */
-    .btn-primary { background: var(--text-dark); color: var(--surface); border: none; padding: 12px 20px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; font-size: 0.95rem; }
-    .btn-primary:hover { opacity: 0.9; }
-    .btn-icon { background: transparent; border: none; color: var(--text-gray); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
-    .btn-icon:hover { color: var(--text-dark); }
-
-    /* Стили для Модального окна формы */
-    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 100; }
-    .modal-backdrop.active { opacity: 1; pointer-events: auto; }
-    .modal-container { background: var(--surface); width: 100%; max-width: 480px; padding: 32px; border-radius: var(--radius-lg); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: translateY(-20px); transition: all 0.3s ease; }
-    .modal-backdrop.active .modal-container { transform: translateY(0); }
-    
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .modal-header h2 { font-size: 1.35rem; font-weight: 700; }
-    
-    .form-group { margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-dark); }
-    .form-input { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); font-size: 0.95rem; outline: none; transition: 0.2s; }
-    .form-input:focus { border-color: var(--green-primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
-    
-    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
-    .btn-secondary { background: #f3f4f6; color: var(--text-dark); border: none; padding: 12px 20px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .btn-secondary:hover { background: #e5e7eb; }
-  </style>
+        /* Модальное окно (Форма) */
+        .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 100; }
+        .modal-backdrop.active { opacity: 1; pointer-events: auto; }
+        .modal-container { background: var(--surface); width: 100%; max-width: 440px; padding: 28px; border-radius: var(--radius-lg); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: translateY(-20px); transition: all 0.3s ease; }
+        .modal-backdrop.active .modal-container { transform: translateY(0); }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h2 { font-size: 18px; font-weight: 700; }
+        
+        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-dark); }
+        .form-input { width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px; outline: none; }
+        .form-input:focus { border-color: var(--purple-primary); }
+        
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+        .btn-secondary { background: #f1f5f9; color: var(--text-dark); border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    </style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <div class="logo"><i class="ph-fill ph-plant"></i> FinFlow</div>
-    <nav class="nav">
-      <a href="index.html" class="nav-item"><i class="ph ph-house"></i> Главная</a>
-      <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
-      <a href="budget.html" class="nav-item"><i class="ph ph-pie-chart"></i> Бюджет</a>
-      <a href="accounts.html" class="nav-item active"><i class="ph ph-wallet"></i> Счета</a>
-      <a href="investments.html" class="nav-item"><i class="ph ph-trend-up"></i> Инвестиции</a>
-      <a href="goals.html" class="nav-item"><i class="ph ph-target"></i> Цели</a>
-      <a href="analytics.html" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
-      <a href="reports.html" class="nav-item"><i class="ph ph-file-text"></i> Отчеты</a>
-      <a href="debts.html" class="nav-item"><i class="ph ph-hand-coins"></i> Долги</a>
-      <a href="settings.html" class="nav-item"><i class="ph ph-gear"></i> Настройки</a>
-    </nav>
-  </aside>
+    <aside class="sidebar">
+        <div style="padding: 0 24px; font-weight: 700; margin-bottom: 32px; font-size: 18px; color: var(--text-dark);">FinFlow</div>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-item"><i class="ph ph-house"></i> Главная</a>
+            <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
+            <a href="budget.html" class="nav-item"><i class="ph ph-wallet"></i> Бюджет</a>
+            <a href="accounts.html" class="nav-item active"><i class="ph ph-credit-card"></i> Счета</a>
+            <a href="debts.html" class="nav-item"><i class="ph ph-hand-coins"></i> Долги</a>
+        </nav>
+    </aside>
 
-  <main class="content">
-    
-    <div class="header-panel">
-      <div class="header-title">
-        <h1>Мои счета</h1>
-        <p>Управление вашими картами в RUB и BYN, наличными и накоплениями</p>
-      </div>
-      
-      <div style="display: flex; align-items: center; gap: 16px;">
-        <div class="currency-switch" id="currencyTabs">
-          <button class="currency-btn active" data-curr="RUB">₽ RUB</button>
-          <button class="currency-btn" data-curr="BYN">Br BYN</button>
+    <main class="main-content">
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Счета</h1>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div class="currency-switch" id="currencyTabs">
+                    <button class="currency-btn active" data-curr="RUB">₽ RUB</button>
+                    <button class="currency-btn" data-curr="BYN">Br BYN</button>
+                </div>
+                <button onclick="openModal()" style="padding: 10px 16px; background: var(--purple-primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">+ Добавить счёт</button>
+            </div>
+        </header>
+
+        <div class="kpi-row">
+            <div class="kpi-card"><div class="kpi-title">Всего на счетах</div><div class="kpi-value" id="kpiTotal">0 ₽</div><div class="kpi-trend" id="kpiGlobalTrend">+3,08% за месяц</div></div>
+            <div class="kpi-card"><div class="kpi-title">Текущие счета</div><div class="kpi-value" id="kpiRegular">0 ₽</div><div class="kpi-trend" id="countRegular">0 счета</div></div>
+            <div class="kpi-card"><div class="kpi-title">Накопительные</div><div class="kpi-value" id="kpiSaving">0 ₽</div><div class="kpi-trend" id="countSaving">0 счета</div></div>
+            <div class="kpi-card"><div class="kpi-title">Кредитные счета</div><div class="kpi-value" id="kpiCredit" style="color: var(--red-primary);">0 ₽</div><div class="kpi-trend" id="countCredit">0 счетов</div></div>
         </div>
-        <button class="btn-primary" onclick="openModal()">
-          <i class="ph ph-plus-bold"></i> Добавить счёт
-        </button>
-      </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="section-header">Текущие счета</div>
+                <div class="account-list" id="regularContainer"></div>
+                
+                <div class="section-header">Накопительные счета</div>
+                <div class="account-list" id="savingContainer"></div>
+
+                <div class="section-header">Кредитные счета</div>
+                <div class="account-list" id="creditContainer"></div>
+            </div>
+
+            <div>
+                <div class="widget-card">
+                    <h3>Распределение средств</h3>
+                    <div style="margin-top: 16px;" class="donut-chart"></div>
+                </div>
+                <div class="promo-box">
+                    <p style="font-weight: 600; margin-bottom: 8px;">Копите проще</p>
+                    <p style="font-size: 13px; color: var(--text-gray);">Создайте цель и перенаправляйте часть дохода автоматически</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-backdrop" id="accountModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Новый счет</h2>
+                <button class="btn-icon" onclick="closeModal()"><i class="ph ph-x-bold"></i></button>
+            </div>
+            
+            <form id="accountForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label for="accName">Название счета</label>
+                    <input type="text" id="accName" class="form-input" placeholder="Например: Основная карта, Заначка" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="accBank">Банк / Источник</label>
+                    <input type="text" id="accBank" class="form-input" placeholder="Например: Belarusbank, Т-Банк, Наличные" required>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="accType">Тип счета</label>
+                        <select id="accType" class="form-input" onchange="toggleTargetField()" required>
+                            <option value="regular">Текущий</option>
+                            <option value="saving">Накопительный</option>
+                            <option value="credit">Кредитный</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="accCurrency">Валюта счета</label>
+                        <select id="accCurrency" class="form-input" required>
+                            <option value="RUB">₽ RUB</option>
+                            <option value="BYN">Br BYN</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="accBalance">Текущий баланс</label>
+                        <input type="number" id="accBalance" class="form-input" placeholder="0" step="any" required>
+                    </div>
+                    <div class="form-group" id="targetGroup" style="display: none;">
+                        <label for="accTarget">Финансовая цель</label>
+                        <input type="number" id="accTarget" class="form-input" placeholder="50000" step="any">
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Отмена</button>
+                    <button type="submit" style="padding: 10px 16px; background: var(--purple-primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Сохранить</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-title">Всего на счетах</div>
-        <div class="kpi-value" id="kpiTotal">0</div>
-        <div class="kpi-trend" id="kpiGlobalTrend">+3,08% за месяц</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Текущие счета</div>
-        <div class="kpi-value" id="kpiRegular">0</div>
-        <div class="kpi-trend" id="countRegular">0 счета</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Накопительные</div>
-        <div class="kpi-value" id="kpiSaving">0</div>
-        <div class="kpi-trend" id="countSaving">0 счета</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Кредитные лимиты</div>
-        <div class="kpi-value" id="kpiCredit" style="color: var(--red-primary);">0</div>
-        <div class="kpi-trend" id="countCredit" style="color: var(--text-gray);">0 счетов</div>
-      </div>
-    </div>
+    <script>
+        // Подключение к Supabase (укажите свои актуальные ключи проекта для связи с БД)
+        const SUPABASE_URL = "https://hbjeauztzbckwcxfvlzw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiamVhdXp0emJja3djeGZ2bHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MTMzNTAsImV4cCI6MjA5ODI4OTM1MH0.dq4G2J9Yg8QvXo_B7dFP9-0SDQTcFHlCtPnGXdgYE4o";
+        let supabase = null;
+        if(SUPABASE_URL !== "https://your-project-id.supabase.co") {
+            supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
 
-    <div class="dashboard-grid">
-      <div class="card">
-        <div class="section-header">Текущие счета</div>
-        <div class="account-list" id="regularContainer"></div>
+        // Фиксированный кросс-курс: 1 BYN = 28 RUB
+        const BYN_TO_RUB_RATE = 28; 
+        let currentCurrency = 'RUB'; // Валюта отображения по умолчанию
+
+        // Стартовый массив данных (счета хранятся в своих оригинальных валютах)
+        let dynamicAccounts = [
+            { id: 1, name: "Основной счёт BYN", bank_name: "Belarusbank", type: "regular", balance: 75430, currency: "BYN" },
+            { id: 2, name: "Зарплатная карта ₽", bank_name: "Т-Банк", type: "regular", balance: 85400, currency: "RUB" },
+            { id: 3, name: "Накопительный счёт", bank_name: "Отпуск в сентябре", type: "saving", balance: 45000, currency: "RUB", target_amount: 150000 },
+            { id: 4, name: "Кредитная карта", bank_name: "Альфа-Банк", type: "credit", balance: -250000, currency: "RUB" }
+        ];
+
+        // Красивое форматирование валют
+        function formatMoney(amount, currency) {
+            if (currency === 'BYN') {
+                return new Intl.NumberFormat('by-BY', { style: 'currency', currency: 'BYN', maximumFractionDigits: 2 }).format(amount);
+            } else {
+                return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(amount);
+            }
+        }
+
+        // Кросс-конвертация валют «на лету»
+        function getConvertedBalance(account, targetCurrency) {
+            if (account.currency === targetCurrency) return account.balance;
+            if (account.currency === 'BYN' && targetCurrency === 'RUB') return account.balance * BYN_TO_RUB_RATE;
+            if (account.currency === 'RUB' && targetCurrency === 'BYN') return account.balance / BYN_TO_RUB_RATE;
+            return account.balance;
+        }
+
+        // Отрисовка интерфейса и подсчет KPI
+        function renderAccounts(data) {
+            const regularCont = document.getElementById('regularContainer');
+            const savingCont = document.getElementById('savingContainer');
+            const creditCont = document.getElementById('creditContainer');
+            
+            regularCont.innerHTML = '';
+            savingCont.innerHTML = '';
+            creditCont.innerHTML = '';
+
+            let totalAll = 0, totalReg = 0, totalSav = 0, totalCrd = 0;
+            let countReg = 0, countSav = 0, countCrd = 0;
+
+            data.forEach(acc => {
+                let displayBalance = getConvertedBalance(acc, currentCurrency);
+                totalAll += displayBalance;
+                let nativeLabel = formatMoney(acc.balance, acc.currency);
+
+                if (acc.type === 'regular') {
+                    totalReg += displayBalance;
+                    countReg++;
+                    regularCont.innerHTML += `
+                        <div class="account-item">
+                            <div><div class="account-name">${acc.name}</div><div class="account-bank">${acc.bank_name}</div></div>
+                            <div><div class="lbl-gray">В выбр. валюте</div><div class="val-bold">${formatMoney(displayBalance, currentCurrency)}</div></div>
+                            <div><div class="lbl-gray">Оригинал</div><div class="val-bold" style="color: var(--text-gray); font-size:12px;">${nativeLabel}</div></div>
+                            <div style="color: var(--green-primary); font-weight: bold;">↗</div>
+                            <button class="btn-icon"><i class="ph ph-dots-three-vertical"></i></button>
+                        </div>`;
+                } else if (acc.type === 'saving') {
+                    totalSav += displayBalance;
+                    countSav++;
+                    let percent = Math.min((acc.balance / acc.target_amount) * 100, 100);
+                    let displayTarget = acc.currency === currentCurrency ? acc.target_amount : (currentCurrency === 'RUB' ? acc.target_amount * BYN_TO_RUB_RATE : acc.target_amount / BYN_TO_RUB_RATE);
+                    
+                    savingCont.innerHTML += `
+                        <div class="account-item">
+                            <div><div class="account-name">${acc.name}</div><div class="account-bank">${acc.bank_name}</div></div>
+                            <div><div class="lbl-gray">Накоплено</div><div class="val-bold">${formatMoney(displayBalance, currentCurrency)}</div></div>
+                            <div><div class="lbl-gray">Цель</div><div class="val-bold">${formatMoney(displayTarget, currentCurrency)}</div></div>
+                            <div class="progress-container">
+                                <div class="lbl-gray" style="margin-bottom:0; text-align:right;">${percent.toFixed(0)}%</div>
+                                <div class="progress-bar-mini"><div class="progress-fill" style="width: ${percent}%"></div></div>
+                            </div>
+                            <button class="btn-icon"><i class="ph ph-dots-three-vertical"></i></button>
+                        </div>`;
+                } else if (acc.type === 'credit') {
+                    totalCrd += displayBalance;
+                    countCrd++;
+                    creditCont.innerHTML += `
+                        <div class="account-item">
+                            <div><div class="account-name">${acc.name}</div><div class="account-bank">${acc.bank_name}</div></div>
+                            <div><div class="lbl-gray">Долг</div><div class="val-bold" style="color: var(--red-primary);">${formatMoney(displayBalance, currentCurrency)}</div></div>
+                            <div><div class="lbl-gray">Оригинал</div><div class="val-bold" style="color: var(--text-gray); font-size:12px;">${nativeLabel}</div></div>
+                            <div></div>
+                            <button class="btn-icon"><i class="ph ph-dots-three-vertical"></i></button>
+                        </div>`;
+                }
+            });
+
+            // Обновление верхних KPI-плашек
+            document.getElementById('kpiTotal').innerText = formatMoney(totalAll, currentCurrency);
+            document.getElementById('kpiRegular').innerText = formatMoney(totalReg, currentCurrency);
+            document.getElementById('kpiSaving').innerText = formatMoney(totalSav, currentCurrency);
+            document.getElementById('kpiCredit').innerText = formatMoney(totalCrd, currentCurrency);
+            
+            document.getElementById('countRegular').innerText = `${countReg} счета`;
+            document.getElementById('countSaving').innerText = `${countSav} счета`;
+            document.getElementById('countCredit').innerText = `${countCrd} счет(а)`;
+        }
+
+        // Загрузка данных
+        async function loadAccountsData() {
+            if (!supabase) {
+                renderAccounts(dynamicAccounts);
+                return;
+            }
+            try {
+                let { data: accounts, error } = await supabase.from('accounts').select('*');
+                if (error) throw error;
+                if (accounts && accounts.length > 0) dynamicAccounts = accounts;
+                renderAccounts(dynamicAccounts);
+            } catch (err) {
+                console.error(err.message);
+                renderAccounts(dynamicAccounts);
+            }
+        }
+
+        // Управление модальным окном
+        function openModal() { document.getElementById('accountModal').classList.add('active'); }
+        function closeModal() { document.getElementById('accountModal').classList.remove('active'); document.getElementById('accountForm').reset(); toggleTargetField(); }
         
-        <div class="section-header">Накопительные счета</div>
-        <div class="account-list" id="savingContainer"></div>
-
-        <div class="section-header">Кредиты и долги</div>
-        <div class="account-list" id="creditContainer"></div>
-      </div>
-
-      <div>
-        <div class="widget-card">
-          <h3>Распределение средств</h3>
-          <div class="donut-chart"></div>
-        </div>
-        <div class="promo-box">
-          <p style="font-weight: 700; margin-bottom: 8px; font-size: 1.05rem;">Копите проще</p>
-          <p style="font-size: 0.9rem; color: var(--text-gray); line-height: 1.4;">Создайте финансовую цель, и FinFlow автоматически распределит ваши накопления.</p>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <div class="modal-backdrop" id="accountModal">
-    <div class="modal-container">
-      <div class="modal-header">
-        <h2>Новый счет</h2>
-        <button class="btn-icon" onclick="closeModal()"><i class="ph ph-x-bold"></i></button>
-      </div>
-      
-      <form id="accountForm" onsubmit="handleFormSubmit(event)">
-        <div class="form-group">
-          <label for="accName">Название счета</label>
-          <input type="text" id="accName" class="form-input" placeholder="Например: Основная карта, Заначка" required>
-        </div>
-
-        <div class="form-group">
-          <label for="accBank">Банк / Источник</label>
-          <input type="text" id="accBank" class="form-input" placeholder="Например: Альфа-Банк, Т-Банк, Наличные" required>
-        </div>
-
-        <div class="form-row-2">
-          <div class="form-group">
-            <label for="accType">Тип счета</label>
-            <select id="accType" class="form-input" onchange="toggleTargetField()" required>
-              <option value="regular">Текущий</option>
-              <option value="saving">Накопительный</option>
-              <option value="credit">Кредитный</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="accCurrency">Валюта счета</label>
-            <select id="accCurrency" class="form-input" required>
-              <option value="RUB">₽ RUB</option>
-              <option value="BYN">Br BYN</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row-2">
-          <div class="form-group">
-            <label for="accBalance">Текущий баланс</label>
-            <input type="number" id="accBalance" class="form-input" placeholder="0" step="any" required>
-          </div>
-          <div class="form-group" id="targetGroup" style="display: none;">
-            <label for="accTarget">Финансовая цель</label>
-            <input type="number" id="accTarget" class="form-input" placeholder="30000" step="any">
-          </div>
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal()">Отмена</button>
-          <button type="submit" class="btn-primary">Сохранить</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    // Настройки Supabase (Укажите ваши данные, если работаете с базой напрямую)
-    const SUPABASE_URL = "https://hbjeauztzbckwcxfvlzw.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiamVhdXp0emJja3djeGZ2bHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MTMzNTAsImV4cCI6MjA5ODI4OTM1MH0.dq4G2J9Yg8QvXo_B7dFP9-0SDQTcFHlCtPnGXdgYE4o";
-    let supabase = null;
-    if(SUPABASE_URL !== "https://your-project-id.supabase.co") {
-      supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    }
-
-    const BYN_TO_RUB_RATE = 27.5; 
-    let currentCurrency = 'RUB';
-
-    // Наш массив данных (нативно хранит балансы в тех валютах, в которых они были открыты)
-    let dynamicAccounts = [
-      { id: 1, name: "Основной счёт Br", bank_name: "Belarusbank", type: "regular", balance: 75430, currency: "BYN" },
-      { id: 2, name: "Зарплатная карта ₽", bank_name: "Tinkoff Black", type: "regular", balance: 85400, currency: "RUB" },
-      { id: 3, name: "Накопительный на отпуск", bank_name: "Приорбанк", type: "saving", balance: 12500, currency: "BYN", target_amount: 32500 },
-      { id: 4, name: "Кредитная карта", bank_name: "Альфа-Банк", type: "credit", balance: -45000, currency: "RUB" }
-    ];
-
-    function formatMoney(amount, currency) {
-      if (currency === 'BYN') {
-        return new Intl.NumberFormat('by-BY', { style: 'currency', currency: 'BYN', maximumFractionDigits: 2 }).format(amount);
-      } else {
-        return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(amount);
-      }
-    }
-
-    function getConvertedBalance(account, targetCurrency) {
-      if (account.currency === targetCurrency) return account.balance;
-      if (account.currency === 'BYN' && targetCurrency === 'RUB') return account.balance * BYN_TO_RUB_RATE;
-      if (account.currency === 'RUB' && targetCurrency === 'BYN') return account.balance / BYN_TO_RUB_RATE;
-      return account.balance;
-    }
-
-    function renderAccounts(data) {
-      const regularCont = document.getElementById('regularContainer');
-      const savingCont = document.getElementById('savingContainer');
-      const creditCont = document.getElementById('creditContainer');
-      
-      regularCont.innerHTML = '';
-      savingCont.innerHTML = '';
-      creditCont.innerHTML = '';
-
-      let totalAll = 0, totalReg = 0, totalSav = 0, totalCrd = 0;
-      let countReg = 0, countSav = 0, countCrd = 0;
-
-      data.forEach(acc => {
-        let displayBalance = getConvertedBalance(acc, currentCurrency);
-        totalAll += displayBalance;
-        let nativeLabel = formatMoney(acc.balance, acc.currency);
-
-        if (acc.type === 'regular') {
-          totalReg += displayBalance;
-          countReg++;
-          regularCont.innerHTML += `
-            <div class="account-item">
-              <div>
-                <div class="account-name">${acc.name}</div>
-                <div class="account-bank">${acc.bank_name} <span style="color:var(--green-primary); font-weight:600;">(${acc.currency})</span></div>
-              </div>
-              <div><div class="lbl-gray">В выбр. валюте</div><div class="val-bold">${formatMoney(displayBalance, currentCurrency)}</div></div>
-              <div><div class="lbl-gray">Нативный баланс</div><div class="val-bold" style="color: var(--text-gray); font-size:0.85rem;">${nativeLabel}</div></div>
-              <div style="color: var(--green-primary); font-weight: bold; text-align: center;">↗</div>
-              <button class="btn-icon"><i class="ph ph-dots-three-vertical"></i></button>
-            </div>`;
-        } else if (acc.type === 'saving') {
-          totalSav += displayBalance;
-          countSav++;
-          let percent = Math.min((acc.balance / acc.target_amount) * 100, 100);
-          let displayTarget = acc.currency === currentCurrency ? acc.target_amount : (currentCurrency === 'RUB' ? acc.target_amount * BYN_TO_RUB_RATE : acc.target_amount / BYN_TO_RUB_RATE);
-          
-          savingCont.innerHTML += `
-            <div class="account-item">
-              <div>
-                <div class="account-name">${acc.name}</div>
-                <div class="account-bank">${acc.bank_name} <span style="color:var(--green-primary); font-weight:600;">(${acc.currency})</span></div>
-              </div>
-              <div><div class="lbl-gray">Накоплено</div><div class="val-bold">${formatMoney(displayBalance, currentCurrency)}</div></div>
-              <div><div class="lbl-gray">Цель</div><div class="val-bold">${formatMoney(displayTarget, currentCurrency)}</div></div>
-              <div>
-                <div class="lbl-gray" style="text-align: right;">${percent.toFixed(0)}%</div>
-                <div class="progress-bar-mini"><div class="progress-fill" style="width: ${percent}%"></div></div>
-              </div>
-              <button class="btn-icon"><i class="ph ph-dots-three-vertical"></i></button>
-            </div>`;
-        } else if (acc.type === 'credit') {
-          totalCrd += displayBalance;
-          countCrd++;
-          creditCont.innerHTML += `
-            <div class="account-item">
-              <div>
-                <div class="account-name">${acc.name}</div>
-                <div class="account-bank">${acc.bank_name} <span style="color:var(--green-primary); font-weight:600;">(${acc.currency})</span></div>
-              </div>
-              <div><div class="lbl-gray">Задолженность</div><div class="val-bold" style="color: var(--red-primary);">${formatMoney(Math.abs(displayBalance), currentCurrency)}</div></div>
-              <div><div class="lbl-gray">В оригинале</div><div class="val-bold" style="color: var(--text-gray); font-size:0.85rem;">${nativeLabel}</div></div>
-              <div></div>
-              <button class="btn-icon"><i class="ph ph-dots-three-vertical"></i></button>
-            </div>`;
+        function toggleTargetField() {
+            const type = document.getElementById('accType').value;
+            const targetGroup = document.getElementById('targetGroup');
+            if (type === 'saving') {
+                targetGroup.style.display = 'flex';
+                document.getElementById('accTarget').required = true;
+            } else {
+                targetGroup.style.display = 'none';
+                document.getElementById('accTarget').required = false;
+            }
         }
-      });
 
-      document.getElementById('kpiTotal').innerText = formatMoney(totalAll, currentCurrency);
-      document.getElementById('kpiRegular').innerText = formatMoney(totalReg, currentCurrency);
-      document.getElementById('kpiSaving').innerText = formatMoney(totalSav, currentCurrency);
-      document.getElementById('kpiCredit').innerText = formatMoney(totalCrd, currentCurrency);
-      
-      document.getElementById('countRegular').innerText = `${countReg} счета`;
-      document.getElementById('countSaving').innerText = `${countSav} счета`;
-      document.getElementById('countCredit').innerText = `${countCrd} кошельков`;
-    }
+        // Обработка отправки формы
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const newAcc = {
+                name: document.getElementById('accName').value,
+                bank_name: document.getElementById('accBank').value,
+                type: document.getElementById('accType').value,
+                currency: document.getElementById('accCurrency').value,
+                balance: parseFloat(document.getElementById('accBalance').value) || 0,
+                target_amount: parseFloat(document.getElementById('accTarget').value) || null
+            };
 
-    async function loadAccountsData() {
-      if (!supabase) {
-        renderAccounts(dynamicAccounts);
-        return;
-      }
-      try {
-        let { data: accounts, error } = await supabase.from('accounts').select('*');
-        if (error) throw error;
-        if (accounts && accounts.length > 0) dynamicAccounts = accounts;
-        renderAccounts(dynamicAccounts);
-      } catch (err) {
-        console.error(err.message);
-        renderAccounts(dynamicAccounts);
-      }
-    }
+            // Превращаем кредитный баланс в отрицательное число
+            if (newAcc.type === 'credit' && newAcc.balance > 0) {
+                newAcc.balance = -newAcc.balance;
+            }
 
-    // Логика Модального Окна (Управление формой)
-    function openModal() { document.getElementById('accountModal').classList.add('active'); }
-    function closeModal() { document.getElementById('accountModal').classList.remove('active'); document.getElementById('accountForm').reset(); toggleTargetField(); }
-    
-    function toggleTargetField() {
-      const type = document.getElementById('accType').value;
-      const targetGroup = document.getElementById('targetGroup');
-      if (type === 'saving') {
-        targetGroup.style.display = 'flex';
-        document.getElementById('accTarget').required = true;
-      } else {
-        targetGroup.style.display = 'none';
-        document.getElementById('accTarget').required = false;
-      }
-    }
+            if (supabase) {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    newAcc.user_id = user.id;
+                    const { error } = await supabase.from('accounts').insert([newAcc]);
+                    if (error) alert("Ошибка Supabase: " + error.message);
+                }
+            } else {
+                newAcc.id = Date.now();
+                dynamicAccounts.push(newAcc);
+            }
 
-    // Сохранение нового счета
-    async function handleFormSubmit(e) {
-      e.preventDefault();
-      
-      const newAcc = {
-        name: document.getElementById('accName').value,
-        bank_name: document.getElementById('accBank').value,
-        type: document.getElementById('accType').value,
-        currency: document.getElementById('accCurrency').value,
-        balance: parseFloat(document.getElementById('accBalance').value) || 0,
-        target_amount: parseFloat(document.getElementById('accTarget').value) || null
-      };
-
-      // Если кредитный тип — превращаем баланс в отрицательное число для учета долга
-      if (newAcc.type === 'credit' && newAcc.balance > 0) {
-        newAcc.balance = -newAcc.balance;
-      }
-
-      if (supabase) {
-        // Логика для Supabase с автоматической привязкой к сессии юзера
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          newAcc.user_id = user.id;
-          const { error } = await supabase.from('accounts').insert([newAcc]);
-          if (error) alert("Ошибка Supabase: " + error.message);
+            closeModal();
+            loadAccountsData();
         }
-      } else {
-        // Локальный режим (если ключи Supabase еще не подключены)
-        newAcc.id = Date.now();
-        dynamicAccounts.push(newAcc);
-      }
 
-      closeModal();
-      loadAccountsData();
-    }
+        // Логика переключения табов валюты в шапке
+        document.querySelectorAll('#currencyTabs .currency-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#currencyTabs .currency-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentCurrency = e.target.dataset.curr;
+                loadAccountsData();
+            });
+        });
 
-    // Управление табами глобальной валюты
-    document.querySelectorAll('#currencyTabs .currency-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('#currencyTabs .currency-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        currentCurrency = e.target.dataset.curr;
+        // Первичная инициализация при загрузке
         loadAccountsData();
-      });
-    });
-
-    loadAccountsData();
-  </script>
+    </script>
 </body>
 </html>
