@@ -6,43 +6,33 @@
     <title>FinFlow - Бюджет</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --bg-main: #f4f6f9;
+      --surface: #ffffff;
+      --text-dark: #111827;
+      --text-gray: #6b7280;
+      --green-primary: #10b981;
+      --green-light: #d1fae5;
+      --border: #e2e8f0;
+      --radius-md: 16px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text-dark); display: flex; min-height: 100vh; }
+    
+    /* Сайдбар */
+    .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); padding: 30px 20px; display: flex; flex-direction: column; flex-shrink: 0; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 1.2rem; font-weight: 800; margin-bottom: 40px; color: var(--text-dark); }
+    .nav { display: flex; flex-direction: column; gap: 8px; }
+    .nav-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: var(--radius-md); color: var(--text-gray); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.2s; }
+    .nav-item i { font-size: 22px; }
+    .nav-item.active { background: var(--green-light); color: var(--green-primary); }
+    .nav-item:hover:not(.active) { background: #f9fafb; color: var(--text-dark); }
+    
+    /* Основной контент */
+    main { flex: 1; padding: 40px; overflow-y: auto; }
+</style>
 
-        :root {
-            --bg-main: #f8fafc;
-            --surface: #ffffff;
-            --text-dark: #0f172a;
-            --text-gray: #64748b;
-            --text-light: #94a3b8;
-            --purple-primary: #7c3aed;
-            --purple-light: #f3e8ff;
-            --green-primary: #10b981;
-            --green-light: #d1fae5;
-            --blue-primary: #3b82f6;
-            --yellow-primary: #f59e0b;
-            --red-primary: #ef4444;
-            --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --radius-lg: 16px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-dark);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
 
         /* --- Сайдбар --- */
         .sidebar {
@@ -144,43 +134,22 @@
         .user-profile {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 8px;
-            cursor: pointer;
-        }
+<aside class="sidebar">
+    <div class="logo"><i class="ph-fill ph-plant"></i> FinFlow</div>
+    <nav class="nav">
+      <a href="index.html" class="nav-item"><i class="ph ph-house"></i> Главная</a>
+      <a href="transactions.html" class="nav-item"><i class="ph ph-arrows-left-right"></i> Операции</a>
+      <a href="budget.html" class="nav-item"><i class="ph ph-pie-chart"></i> Бюджет</a>
+      <a href="accounts.html" class="nav-item"><i class="ph ph-wallet"></i> Счета</a>
+      <a href="investments.html" class="nav-item"><i class="ph ph-trend-up"></i> Инвестиции</a>
+      <a href="goals.html" class="nav-item"><i class="ph ph-target"></i> Цели</a>
+      <a href="analytics.html" class="nav-item"><i class="ph ph-chart-bar"></i> Аналитика</a>
+      <a href="reports.html" class="nav-item"><i class="ph ph-file-text"></i> Отчеты</a>
+      <a href="debts.html" class="nav-item"><i class="ph ph-hand-coins"></i> Долги</a>
+      <a href="settings.html" class="nav-item"><i class="ph ph-gear"></i> Настройки</a>
+    </nav>
+</aside>
 
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: #cbd5e1;
-            background-image: url('https://i.pravatar.cc/100?img=11');
-            background-size: cover;
-        }
-
-        .user-info {
-            flex-grow: 1;
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .user-role {
-            font-size: 12px;
-            color: var(--text-gray);
-        }
-
-        /* --- Основной контент --- */
-        .main-content {
-            flex-grow: 1;
-            padding: 32px 40px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
 
         /* Шапка */
         .header {
