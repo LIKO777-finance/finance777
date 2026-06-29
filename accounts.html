@@ -23,6 +23,7 @@
       --border: #f3f4f6;
       --radius-lg: 24px;
       --radius-md: 16px;
+      --radius-sm: 12px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -91,6 +92,25 @@
     .btn-primary:hover { opacity: 0.9; }
     .btn-icon { background: transparent; border: none; color: var(--text-gray); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
     .btn-icon:hover { color: var(--text-dark); }
+
+    /* Стили для Модального окна формы */
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 100; }
+    .modal-backdrop.active { opacity: 1; pointer-events: auto; }
+    .modal-container { background: var(--surface); width: 100%; max-width: 480px; padding: 32px; border-radius: var(--radius-lg); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: translateY(-20px); transition: all 0.3s ease; }
+    .modal-backdrop.active .modal-container { transform: translateY(0); }
+    
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .modal-header h2 { font-size: 1.35rem; font-weight: 700; }
+    
+    .form-group { margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-dark); }
+    .form-input { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); font-size: 0.95rem; outline: none; transition: 0.2s; }
+    .form-input:focus { border-color: var(--green-primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+    
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+    .btn-secondary { background: #f3f4f6; color: var(--text-dark); border: none; padding: 12px 20px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-secondary:hover { background: #e5e7eb; }
   </style>
 </head>
 <body>
@@ -124,7 +144,7 @@
           <button class="currency-btn active" data-curr="RUB">₽ RUB</button>
           <button class="currency-btn" data-curr="BYN">Br BYN</button>
         </div>
-        <button class="btn-primary" onclick="alert('Форма создания нового счета появится при интеграции Supabase')">
+        <button class="btn-primary" onclick="openModal()">
           <i class="ph ph-plus-bold"></i> Добавить счёт
         </button>
       </div>
@@ -155,7 +175,6 @@
 
     <div class="dashboard-grid">
       <div class="card">
-        
         <div class="section-header">Текущие счета</div>
         <div class="account-list" id="regularContainer"></div>
         
@@ -164,7 +183,6 @@
 
         <div class="section-header">Кредиты и долги</div>
         <div class="account-list" id="creditContainer"></div>
-
       </div>
 
       <div>
@@ -178,11 +196,65 @@
         </div>
       </div>
     </div>
-
   </main>
 
+  <div class="modal-backdrop" id="accountModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Новый счет</h2>
+        <button class="btn-icon" onclick="closeModal()"><i class="ph ph-x-bold"></i></button>
+      </div>
+      
+      <form id="accountForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-group">
+          <label for="accName">Название счета</label>
+          <input type="text" id="accName" class="form-input" placeholder="Например: Основная карта, Заначка" required>
+        </div>
+
+        <div class="form-group">
+          <label for="accBank">Банк / Источник</label>
+          <input type="text" id="accBank" class="form-input" placeholder="Например: Альфа-Банк, Т-Банк, Наличные" required>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="accType">Тип счета</label>
+            <select id="accType" class="form-input" onchange="toggleTargetField()" required>
+              <option value="regular">Текущий</option>
+              <option value="saving">Накопительный</option>
+              <option value="credit">Кредитный</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="accCurrency">Валюта счета</label>
+            <select id="accCurrency" class="form-input" required>
+              <option value="RUB">₽ RUB</option>
+              <option value="BYN">Br BYN</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="accBalance">Текущий баланс</label>
+            <input type="number" id="accBalance" class="form-input" placeholder="0" step="any" required>
+          </div>
+          <div class="form-group" id="targetGroup" style="display: none;">
+            <label for="accTarget">Финансовая цель</label>
+            <input type="number" id="accTarget" class="form-input" placeholder="30000" step="any">
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal()">Отмена</button>
+          <button type="submit" class="btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
-    // Настройки Supabase
+    // Настройки Supabase (Укажите ваши данные, если работаете с базой напрямую)
     const SUPABASE_URL = "https://your-project-id.supabase.co";
     const SUPABASE_ANON_KEY = "your-anon-key";
     let supabase = null;
@@ -190,19 +262,17 @@
       supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
-    // Курс обмена: 1 BYN = 27.5 RUB
     const BYN_TO_RUB_RATE = 27.5; 
-    let currentCurrency = 'RUB'; // Активный режим просмотра (RUB или BYN)
+    let currentCurrency = 'RUB';
 
-    // Тестовые данные с РАЗНЫМИ нативными валютами (как в реальной СУБД)
-    const mockAccounts = [
+    // Наш массив данных (нативно хранит балансы в тех валютах, в которых они были открыты)
+    let dynamicAccounts = [
       { id: 1, name: "Основной счёт Br", bank_name: "Belarusbank", type: "regular", balance: 75430, currency: "BYN" },
       { id: 2, name: "Зарплатная карта ₽", bank_name: "Tinkoff Black", type: "regular", balance: 85400, currency: "RUB" },
       { id: 3, name: "Накопительный на отпуск", bank_name: "Приорбанк", type: "saving", balance: 12500, currency: "BYN", target_amount: 32500 },
       { id: 4, name: "Кредитная карта", bank_name: "Альфа-Банк", type: "credit", balance: -45000, currency: "RUB" }
     ];
 
-    // Красивое форматирование валют под стандарты региона
     function formatMoney(amount, currency) {
       if (currency === 'BYN') {
         return new Intl.NumberFormat('by-BY', { style: 'currency', currency: 'BYN', maximumFractionDigits: 2 }).format(amount);
@@ -211,19 +281,10 @@
       }
     }
 
-    // Динамическая конвертация на лету
     function getConvertedBalance(account, targetCurrency) {
-      if (account.currency === targetCurrency) {
-        return account.balance; // Конвертация не нужна
-      }
-      // Если счет в BYN, а смотрим в RUB -> умножаем на курс
-      if (account.currency === 'BYN' && targetCurrency === 'RUB') {
-        return account.balance * BYN_TO_RUB_RATE;
-      }
-      // Если счет в RUB, а смотрим в BYN -> делим на курс
-      if (account.currency === 'RUB' && targetCurrency === 'BYN') {
-        return account.balance / BYN_TO_RUB_RATE;
-      }
+      if (account.currency === targetCurrency) return account.balance;
+      if (account.currency === 'BYN' && targetCurrency === 'RUB') return account.balance * BYN_TO_RUB_RATE;
+      if (account.currency === 'RUB' && targetCurrency === 'BYN') return account.balance / BYN_TO_RUB_RATE;
       return account.balance;
     }
 
@@ -240,11 +301,8 @@
       let countReg = 0, countSav = 0, countCrd = 0;
 
       data.forEach(acc => {
-        // Вычисляем значение баланса в ВЫБРАННОЙ пользователем валюте отображения
         let displayBalance = getConvertedBalance(acc, currentCurrency);
         totalAll += displayBalance;
-
-        // Также получаем нативный баланс для подписей (чтобы было видно исходную валюту)
         let nativeLabel = formatMoney(acc.balance, acc.currency);
 
         if (acc.type === 'regular') {
@@ -254,25 +312,16 @@
             <div class="account-item">
               <div>
                 <div class="account-name">${acc.name}</div>
-                <div class="account-bank">${acc.bank_name} <span style="color:var(--green-primary)">(${acc.currency})</span></div>
+                <div class="account-bank">${acc.bank_name} <span style="color:var(--green-primary); font-weight:600;">(${acc.currency})</span></div>
               </div>
-              <div>
-                <div class="lbl-gray">В выбр. валюте</div>
-                <div class="val-bold">${formatMoney(displayBalance, currentCurrency)}</div>
-              </div>
-              <div>
-                <div class="lbl-gray">Нативный баланс</div>
-                <div class="val-bold" style="color: var(--text-gray); font-size:0.85rem;">${nativeLabel}</div>
-              </div>
+              <div><div class="lbl-gray">В выбр. валюте</div><div class="val-bold">${formatMoney(displayBalance, currentCurrency)}</div></div>
+              <div><div class="lbl-gray">Нативный баланс</div><div class="val-bold" style="color: var(--text-gray); font-size:0.85rem;">${nativeLabel}</div></div>
               <div style="color: var(--green-primary); font-weight: bold; text-align: center;">↗</div>
               <button class="btn-icon"><i class="ph ph-dots-three-vertical"></i></button>
-            </div>
-          `;
+            </div>`;
         } else if (acc.type === 'saving') {
           totalSav += displayBalance;
           countSav++;
-          
-          // Для накопительного высчитываем процент достижения цели на основе нативных данных счета
           let percent = Math.min((acc.balance / acc.target_amount) * 100, 100);
           let displayTarget = acc.currency === currentCurrency ? acc.target_amount : (currentCurrency === 'RUB' ? acc.target_amount * BYN_TO_RUB_RATE : acc.target_amount / BYN_TO_RUB_RATE);
           
@@ -280,23 +329,16 @@
             <div class="account-item">
               <div>
                 <div class="account-name">${acc.name}</div>
-                <div class="account-bank">${acc.bank_name}</div>
+                <div class="account-bank">${acc.bank_name} <span style="color:var(--green-primary); font-weight:600;">(${acc.currency})</span></div>
               </div>
-              <div>
-                <div class="lbl-gray">Накоплено</div>
-                <div class="val-bold">${formatMoney(displayBalance, currentCurrency)}</div>
-              </div>
-              <div>
-                <div class="lbl-gray">Цель</div>
-                <div class="val-bold">${formatMoney(displayTarget, currentCurrency)}</div>
-              </div>
+              <div><div class="lbl-gray">Накоплено</div><div class="val-bold">${formatMoney(displayBalance, currentCurrency)}</div></div>
+              <div><div class="lbl-gray">Цель</div><div class="val-bold">${formatMoney(displayTarget, currentCurrency)}</div></div>
               <div>
                 <div class="lbl-gray" style="text-align: right;">${percent.toFixed(0)}%</div>
                 <div class="progress-bar-mini"><div class="progress-fill" style="width: ${percent}%"></div></div>
               </div>
               <button class="btn-icon"><i class="ph ph-dots-three-vertical"></i></button>
-            </div>
-          `;
+            </div>`;
         } else if (acc.type === 'credit') {
           totalCrd += displayBalance;
           countCrd++;
@@ -304,24 +346,16 @@
             <div class="account-item">
               <div>
                 <div class="account-name">${acc.name}</div>
-                <div class="account-bank">${acc.bank_name}</div>
+                <div class="account-bank">${acc.bank_name} <span style="color:var(--green-primary); font-weight:600;">(${acc.currency})</span></div>
               </div>
-              <div>
-                <div class="lbl-gray">Задолженность</div>
-                <div class="val-bold" style="color: var(--red-primary);">${formatMoney(Math.abs(displayBalance), currentCurrency)}</div>
-              </div>
-              <div>
-                <div class="lbl-gray">В оригинале</div>
-                <div class="val-bold" style="color: var(--text-gray); font-size:0.85rem;">${nativeLabel}</div>
-              </div>
+              <div><div class="lbl-gray">Задолженность</div><div class="val-bold" style="color: var(--red-primary);">${formatMoney(Math.abs(displayBalance), currentCurrency)}</div></div>
+              <div><div class="lbl-gray">В оригинале</div><div class="val-bold" style="color: var(--text-gray); font-size:0.85rem;">${nativeLabel}</div></div>
               <div></div>
               <button class="btn-icon"><i class="ph ph-dots-three-vertical"></i></button>
-            </div>
-          `;
+            </div>`;
         }
       });
 
-      // Обновление KPI карточек верхнего ряда
       document.getElementById('kpiTotal').innerText = formatMoney(totalAll, currentCurrency);
       document.getElementById('kpiRegular').innerText = formatMoney(totalReg, currentCurrency);
       document.getElementById('kpiSaving').innerText = formatMoney(totalSav, currentCurrency);
@@ -334,30 +368,82 @@
 
     async function loadAccountsData() {
       if (!supabase) {
-        renderAccounts(mockAccounts);
+        renderAccounts(dynamicAccounts);
         return;
       }
       try {
         let { data: accounts, error } = await supabase.from('accounts').select('*');
         if (error) throw error;
-        renderAccounts(accounts && accounts.length > 0 ? accounts : mockAccounts);
+        if (accounts && accounts.length > 0) dynamicAccounts = accounts;
+        renderAccounts(dynamicAccounts);
       } catch (err) {
         console.error(err.message);
-        renderAccounts(mockAccounts);
+        renderAccounts(dynamicAccounts);
       }
     }
 
-    // Обработчик переключения валют (RUB <-> BYN)
+    // Логика Модального Окна (Управление формой)
+    function openModal() { document.getElementById('accountModal').classList.add('active'); }
+    function closeModal() { document.getElementById('accountModal').classList.remove('active'); document.getElementById('accountForm').reset(); toggleTargetField(); }
+    
+    function toggleTargetField() {
+      const type = document.getElementById('accType').value;
+      const targetGroup = document.getElementById('targetGroup');
+      if (type === 'saving') {
+        targetGroup.style.display = 'flex';
+        document.getElementById('accTarget').required = true;
+      } else {
+        targetGroup.style.display = 'none';
+        document.getElementById('accTarget').required = false;
+      }
+    }
+
+    // Сохранение нового счета
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      const newAcc = {
+        name: document.getElementById('accName').value,
+        bank_name: document.getElementById('accBank').value,
+        type: document.getElementById('accType').value,
+        currency: document.getElementById('accCurrency').value,
+        balance: parseFloat(document.getElementById('accBalance').value) || 0,
+        target_amount: parseFloat(document.getElementById('accTarget').value) || null
+      };
+
+      // Если кредитный тип — превращаем баланс в отрицательное число для учета долга
+      if (newAcc.type === 'credit' && newAcc.balance > 0) {
+        newAcc.balance = -newAcc.balance;
+      }
+
+      if (supabase) {
+        // Логика для Supabase с автоматической привязкой к сессии юзера
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          newAcc.user_id = user.id;
+          const { error } = await supabase.from('accounts').insert([newAcc]);
+          if (error) alert("Ошибка Supabase: " + error.message);
+        }
+      } else {
+        // Локальный режим (если ключи Supabase еще не подключены)
+        newAcc.id = Date.now();
+        dynamicAccounts.push(newAcc);
+      }
+
+      closeModal();
+      loadAccountsData();
+    }
+
+    // Управление табами глобальной валюты
     document.querySelectorAll('#currencyTabs .currency-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         document.querySelectorAll('#currencyTabs .currency-btn').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
-        currentCurrency = e.target.dataset.curr; // Принимает RUB или BYN
+        currentCurrency = e.target.dataset.curr;
         loadAccountsData();
       });
     });
 
-    // Инициализация при загрузке страницы
     loadAccountsData();
   </script>
 </body>
